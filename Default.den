@@ -1,0 +1,37 @@
+byte _x = 20;
+byte _y = 20;
+
+Sprite sp0;
+Sprite sp1;
+Sprite sp2;
+Sprite sp3;
+Sprite sp4;
+Sprite sp5;
+Sprite sp6;
+Sprite sp7;
+
+
+void Start(){
+
+  sp0 = CreateSprite(_x, _y, 0); //x, y, tile
+  sp1 = CreateSprite(_x+8, _y, 1);
+  sp2 = CreateSprite(_x, _y+8, 2);
+  sp3 = CreateSprite(_x+8,_y+8,3);
+  sp4 = CreateSprite(_x, _y+8+8, 4);
+  sp5 = CreateSprite(_x+8,_y+8+8,5);
+  sp6 = CreateSprite(_x, _y+8+8+8, 6);
+  sp7 = CreateSprite(_x+8,_y+8+8+8,7);
+
+}
+
+void Update(){
+  sp0.X = sp0.X + 1;
+  sp1.X = sp1.X + 2;
+  sp2.X = sp2.X + 3;
+  sp3.X = sp3.X + 4;
+  sp4.X = sp4.X + 5;
+  sp5.X = sp5.X + 6;
+  sp6.X = sp6.X + 7;
+  sp7.X = sp7.X + 8;
+  
+}

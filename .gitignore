@@ -1,0 +1,5 @@
+bin/*
+obj/*
+Stuff/*
+**.o
+.vs/*
