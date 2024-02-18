@@ -434,6 +434,9 @@ NMI:
     LDX #$02
     STX temp2
     STA (temp), Y
+    LDA #0
+    CMP #$00
+    BEQ ENDIF0
     LDY #3
     LDX sp6
     STX temp
@@ -451,6 +454,10 @@ NMI:
     LDX #$02
     STX temp2
     STA (temp), Y
+ENDIF0:
+    LDA #1
+    CMP #$00
+    BEQ ENDIF1
     LDY #3
     LDX sp7
     STX temp
@@ -468,6 +475,7 @@ NMI:
     LDX #$02
     STX temp2
     STA (temp), Y
+ENDIF1:
 
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014

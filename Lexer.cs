@@ -83,21 +83,24 @@ namespace NesCompiler
                 }
                 else if (char.IsLetter(c) || c == '_')
                 {
-                    // Extract the symbolic literal
                     int j = i;
-                    while (j < _text.Length && (char.IsLetterOrDigit(_text[j]) || _text[j] == '_'))
+                    while (j < _text.Length && (char.IsLetterOrDigit(_text[j]) || _text[j] == '_')) j++;
+                    string literal = _text.Substring(i, j - i);
+
+                    // Check for boolean literals before adding as a symbol
+                    if (literal == "true" || literal == "false")
                     {
-                        j++;
+                        result.Add(new Token("boolean", literal));
                     }
-                    string symbolicLiteral = _text.Substring(i, j - i);
-                    if (symbolicLiteral == "byte" || symbolicLiteral == "Sprite")
+                    else if (IsType(literal))
                     {
-                        result.Add(new Token("type", symbolicLiteral));
-                        i = j - 1;
-                        continue;
+                        result.Add(new Token("type", literal));
                     }
-                    result.Add(new Token("symbol", symbolicLiteral));
-                    i = j - 1;
+                    else
+                    {
+                        result.Add(new Token("symbol", literal));
+                    }
+                    i = j - 1; // Move past the last character of the symbol
                 }
                 else
                 {
@@ -108,6 +111,19 @@ namespace NesCompiler
 
             }
             return result;
+        }
+
+        private bool IsType(string literal)
+        {
+            switch (literal)
+            {
+                case "byte":
+                case "Sprite":
+                case "bool":
+                    return true;
+            }
+
+            return false;
         }
     }
 }

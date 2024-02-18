@@ -111,6 +111,70 @@ namespace NesCompiler
             return node;
         }
 
+        private AstNode ParseIfStatement()
+        {
+            // Expect the current token to be "if", so skip it
+            _current++;
+
+            // Parse the condition inside parentheses
+            if (_tokens[_current++].Type != "(")
+            {
+                throw new Exception("Expected '(' after 'if'");
+            }
+
+            var condition = ParseExpression();
+
+            if (_tokens[_current++].Type != ")")
+            {
+                throw new Exception("Expected ')' after if condition");
+            }
+
+            // Parse the statement block for the true branch
+            var trueBranch = ParseStatementBlock();
+
+            AstNode falseBranch = null;
+            // Optionally, handle else statement
+            if (_current < _tokens.Count && _tokens[_current].Type == "symbol" && _tokens[_current].Value == "else")
+            {
+                _current++; // Skip "else"
+                falseBranch = ParseStatementBlock();
+            }
+
+            var ifNode = new AstNode("IfStatement");
+            ifNode.Children.Add(condition);
+            ifNode.Children.Add(trueBranch);
+            if (falseBranch != null)
+            {
+                ifNode.Children.Add(falseBranch);
+            }
+
+            return ifNode;
+        }
+
+        private AstNode ParseStatementBlock()
+        {
+            if (_tokens[_current].Type != "{")
+            {
+                throw new Exception("Expected '{' at the beginning of a block");
+            }
+            _current++;
+
+            var blockNode = new AstNode("Block");
+            while (_current < _tokens.Count && _tokens[_current].Type != "}")
+            {
+                var statement = ParseStatement();
+                blockNode.Children.Add(statement);
+            }
+
+            if (_tokens[_current].Type != "}")
+            {
+                throw new Exception("Expected '}' at the end of a block");
+            }
+            _current++;
+
+            return blockNode;
+        }
+
         private AstNode ParseFunctionDeclaration()
         {
             // Parse "void"
@@ -192,32 +256,39 @@ namespace NesCompiler
 
         private AstNode ParseStatement()
         {
-            // Parse statement
             var token = _tokens[_current];
             AstNode node;
-            if (token.Type == "symbol")
+
+            // Check if the statement is an 'if' statement
+            if (token.Type == "symbol" && token.Value == "if")
             {
-                if (token.Value == "return")
-                {
-                    node = ParseReturnStatement();
-                }
-                else
-                {
-                    node = ParseExpressionStatement();
-                }
+                node = ParseIfStatement();
+                // For 'if' statements, the ParseIfStatement method handles the block and semicolon,
+                // so we don't expect a semicolon immediately after it.
+            }
+            else if (token.Type == "symbol" && token.Value == "return")
+            {
+                // 'return' statement should end with a semicolon, which is handled inside ParseReturnStatement
+                node = ParseReturnStatement();
+                ExpectSemicolon(); // Checks for and consumes the semicolon, advancing _current
             }
             else
             {
+                // This handles expression statements and expects them to end with a semicolon.
                 node = ParseExpressionStatement();
-            }
-
-            // Parse ";"
-            if (_tokens[_current++].Type != ";")
-            {
-                throw new Exception("Expected ';'" + " found: " + _tokens[_current-1].Type + " : " + _tokens[_current - 1].Value);
+                ExpectSemicolon(); // Checks for and consumes the semicolon, advancing _current
             }
 
             return node;
+        }
+
+        private void ExpectSemicolon()
+        {
+            if (_tokens[_current].Type != ";")
+            {
+                throw new Exception("Expected ';'" + " found: " + _tokens[_current].Type + " : " + _tokens[_current].Value);
+            }
+            _current++; // Consume the semicolon and move to the next token
         }
 
         private AstNode ParseReturnStatement()
@@ -323,42 +394,45 @@ namespace NesCompiler
         private AstNode ParseTerm()
         {
             var token = _tokens[_current];
-            if (token.Type == "number")
+            switch (token.Type)
             {
-                _current++;
-                return new AstNode("Constant", token.Value);
-            }
-            else if (token.Type == "symbol")
-            {
-                _current++;
-                var identifierOrNot = new AstNode("Identifier", token.Value);
-                if (_tokens[_current].Type == ".")
-                {
-                    var memberAccess = new AstNode("MemberAccess");
-                    ++_current;
-                    if(_tokens[_current].Type == "symbol")
+                case "number":
+                    _current++;
+                    return new AstNode("Constant", token.Value);
+                case "boolean": // Handle boolean literals
+                    _current++;
+                    return new AstNode("Boolean", token.Value);
+                case "symbol":
+                    _current++;
+                    var identifier = new AstNode("Identifier", token.Value);
+                    if (_tokens[_current].Type == ".")
                     {
-                        var member = new AstNode("Member", _tokens[_current].Value);
+                        var memberAccess = new AstNode("MemberAccess");
                         ++_current;
-                        memberAccess.Children.Add(identifierOrNot);
-                        memberAccess.Children.Add(member);
-                        return memberAccess;
-                    } else
-                    {
-                        throw new Exception("Expected member");
+                        if (_tokens[_current].Type == "symbol")
+                        {
+                            var member = new AstNode("Member", _tokens[_current].Value);
+                            ++_current;
+                            memberAccess.Children.Add(identifier);
+                            memberAccess.Children.Add(member);
+                            return memberAccess;
+                        }
+                        else
+                        {
+                            throw new Exception("Expected member after '.'");
+                        }
                     }
-                } else if(_tokens[_current].Type == "(")
-                {
-                    --_current;
-                    return ParseFunctionCall();
-                }
-                return identifierOrNot;
-            }
-            else
-            {
-                throw new Exception("Expected number or symbol");
+                    else if (_tokens[_current].Type == "(")
+                    {
+                        --_current; // Adjust the position for parsing the function call correctly
+                        return ParseFunctionCall();
+                    }
+                    return identifier; // Return the identifier node if no member access or function call follows
+                default:
+                    throw new Exception($"Unexpected token: {token.Type}");
             }
         }
+
 
         private AstNode ParseFunctionCall()
         {

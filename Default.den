@@ -31,7 +31,11 @@ void Update(){
   sp3.X = sp3.X + 4;
   sp4.X = sp4.X + 5;
   sp5.X = sp5.X + 6;
-  sp6.X = sp6.X + 7;
-  sp7.X = sp7.X + 8;
+  if(false){
+    sp6.X = sp6.X + 7;
+  }
+  if(true){
+    sp7.X = sp7.X + 8;
+  }
   
 }

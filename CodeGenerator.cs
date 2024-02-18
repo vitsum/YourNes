@@ -71,14 +71,18 @@ namespace NesCompiler
                 case "Expression":
                     GenerateExpression(node);
                     break;
+                case "Block":
                 case "FunctionBody":
-                    GenerateFunctionBody(node);
+                    GenerateBlockOrBody(node);
                     break;
                 case "Expression Statement":
                     GenerateExpressionStatement(node);
                     break;
                 case "Assignment":
                     GenerateAssignment(node);
+                    break;
+                case "IfStatement":
+                    GenerateIfStatement(node);
                     break;
                 default:
                     throw new Exception("Unrecognized node type: " + node.Type);
@@ -127,7 +131,7 @@ namespace NesCompiler
             }
         }
 
-        private void GenerateFunctionBody(AstNode node)
+        private void GenerateBlockOrBody(AstNode node)
         {
             foreach (var child in node.Children)
             {
@@ -175,6 +179,12 @@ namespace NesCompiler
             {
                 var value = node.Children[0].Value;
                 _currentSb.AppendLine($"    LDA #{value}");
+            } 
+            else if(node.Children[0].Type == "Boolean")
+            {
+                // Assuming true is represented as 1 and false as 0 in your target assembly language
+                var boolValue = node.Children[0].Value == "true" ? "1" : "0";
+                _currentSb.AppendLine($"    LDA #{boolValue}");
             }
             else if (node.Children[0].Type == "Identifier")
             {
@@ -325,6 +335,29 @@ namespace NesCompiler
             }
 
         }
+
+        private void GenerateIfStatement(AstNode node)
+        {
+            var condition = node.Children[0];
+            var trueBlock = node.Children[1];
+
+            // Generate condition evaluation code
+            GenerateExpression(condition);
+
+            // Create labels for branching
+            string endIfLabel = $"ENDIF{_labelCounter++}";
+
+            // Assume condition result is in accumulator and branch if false
+            _currentSb.AppendLine("    CMP #$00"); // Compare with false
+            _currentSb.AppendLine($"    BEQ {endIfLabel}"); // Branch to endIfLabel if condition is false
+
+            // Generate code for the true block
+            GenerateNode(trueBlock);
+
+            // Mark the end of the if statement
+            _currentSb.AppendLine($"{endIfLabel}:");
+        }
+
 
         private int GetSizeForType(string type)
         {
