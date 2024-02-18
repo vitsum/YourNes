@@ -371,7 +371,7 @@ namespace NesCompiler
                 else
                 {
                     // Parse a binary operation
-                    while (_tokens[_current].Type == "operation" && (_tokens[_current].Value == "+"))
+                    while (_tokens[_current].Type == "operation" && ("+-".Contains(_tokens[_current].Value)))
                     {
                         var operation = new AstNode("Operation", _tokens[_current++].Value);
                         var leftExpression = new AstNode("Expression");
@@ -394,64 +394,88 @@ namespace NesCompiler
         private AstNode ParseTerm()
         {
             var token = _tokens[_current];
+            AstNode node = null;
+
             switch (token.Type)
             {
                 case "number":
                     _current++;
-                    return new AstNode("Constant", token.Value);
+                    node = new AstNode("Constant", token.Value);
+                    break;
                 case "boolean": // Handle boolean literals
                     _current++;
-                    return new AstNode("Boolean", token.Value);
+                    node = new AstNode("Boolean", token.Value);
+                    break;
                 case "symbol":
                     _current++;
-                    var identifier = new AstNode("Identifier", token.Value);
-                    if (_tokens[_current].Type == ".")
-                    {
-                        var memberAccess = new AstNode("MemberAccess");
-                        ++_current;
-                        if (_tokens[_current].Type == "symbol")
-                        {
-                            var member = new AstNode("Member", _tokens[_current].Value);
-                            ++_current;
-                            memberAccess.Children.Add(identifier);
-                            memberAccess.Children.Add(member);
-                            return memberAccess;
-                        }
-                        else
-                        {
-                            throw new Exception("Expected member after '.'");
-                        }
-                    }
-                    else if (_tokens[_current].Type == "(")
-                    {
-                        --_current; // Adjust the position for parsing the function call correctly
-                        return ParseFunctionCall();
-                    }
-                    return identifier; // Return the identifier node if no member access or function call follows
+                    node = new AstNode("Identifier", token.Value);
+                    break;
                 default:
                     throw new Exception($"Unexpected token: {token.Type}");
             }
+
+            // Проверка на последующий доступ к члену или вызов функции
+            while (_current < _tokens.Count && (_tokens[_current].Type == "." || _tokens[_current].Type == "("))
+            {
+                if (_tokens[_current].Type == ".")
+                {
+                    _current++; // Пропустить '.'
+                    var memberToken = Expect("symbol"); // Ожидаем следующий символ как имя члена
+                                                                // Создаем узел доступа к члену и добавляем текущий узел и узел идентификатора как детей
+                    var memberAccessNode = new AstNode("MemberAccess");
+                    memberAccessNode.Children.Add(node); // Добавляем базовый узел
+                    memberAccessNode.Children.Add(new AstNode("Identifier", memberToken.Value)); // Добавляем узел идентификатора члена
+                    node = memberAccessNode; // Обновляем текущий узел
+                }
+                else if (_tokens[_current].Type == "(")
+                {
+                    // Для обработки вызова функции нам нужно адаптировать ParseFunctionCall,
+                    // чтобы он мог принять текущий узел как часть вызова
+                    node = ParseFunctionCall(node);
+                    // Поскольку ParseFunctionCall уже продвигает _current, не нужно увеличивать его здесь
+                }
+            }
+
+            return node;
+        }
+
+        private Token Expect(string expectedType)
+        {
+            if (_current >= _tokens.Count)
+            {
+                throw new Exception("Unexpected end of input");
+            }
+
+            var currentToken = _tokens[_current];
+            if (currentToken.Type != expectedType)
+            {
+                throw new Exception($"Expected token of type {expectedType}, but found {currentToken.Type}");
+            }
+
+            _current++; // Переходим к следующему токену
+            return currentToken; // Возвращаем текущий токен
         }
 
 
-        private AstNode ParseFunctionCall()
+        private AstNode ParseFunctionCall(AstNode functionOrIdentifierNode)
         {
-            var node = new AstNode("FunctionCall");
-            // Parse function name
-            node.Children.Add(new AstNode("Name", _tokens[_current++].Value));
-            // Parse "("
-            if (_tokens[_current++].Type != "(")
+            // Считаем, что _current уже указывает на '(', поэтому пропускаем его
+            _current++;
+            var args = new List<AstNode>();
+            while (_tokens[_current].Type != ")")
             {
-                throw new Exception("Expected '('");
+                args.Add(ParseExpression());
+                if (_tokens[_current].Type == ",") _current++; // Пропускаем запятую между аргументами
             }
-            // Parse function arguments
-            node.Children.Add(ParseFunctionArguments());
-            // Parse ")"
-            if (_tokens[_current++].Type != ")")
+            _current++; // Пропускаем закрывающую скобку ')'
+
+            var functionCallNode = new AstNode("FunctionCall");
+            functionCallNode.Children.Add(functionOrIdentifierNode); // Добавляем узел функции или идентификатора как первого ребенка
+            foreach (var arg in args)
             {
-                throw new Exception("Expected ')'");
+                functionCallNode.Children.Add(arg); // Добавляем аргументы вызова функции
             }
-            return node;
+            return functionCallNode;
         }
 
         private AstNode ParseFunctionArguments()

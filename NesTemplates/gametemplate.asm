@@ -1,3 +1,14 @@
+BTN_RIGHT   = %00000001
+BTN_LEFT    = %00000010
+BTN_DOWN    = %00000100
+BTN_UP      = %00001000
+BTN_START   = %00010000
+BTN_SELECT  = %00100000
+BTN_B       = %01000000
+BTN_A       = %10000000
+CONTROLLER1 = $4016
+CONTROLLER2 = $4017
+
 .segment "HEADER"
 .byte "NES"
 .byte $1a
@@ -18,6 +29,8 @@ temp5: .res 1
 temp6: .res 1
 temp7: .res 1
 temp8: .res 1
+pad1: .res 1
+pad2: .res 1
 {0}
 .segment "STARTUP"
 Reset:
@@ -83,17 +96,6 @@ LoadPalettes:
     CPX #$20
     BNE LoadPalettes    
 
-    JMP SkipLoadSprite
-
-    LDX #$00
-LoadSprites:
-    LDA SpriteData, X
-    STA $0200, X
-    INX
-    CPX #$20
-    BNE LoadSprites    
-SkipLoadSprite:
-
 ; Clear the nametables- this isn't necessary in most emulators unless
 ; you turn on random memory power-on mode, but on real hardware
 ; not doing this means that the background / nametable will have
@@ -153,7 +155,7 @@ Loop:
     JMP Loop
 
 NMI:
-
+    JSR ReadControllers
 {2}
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
@@ -176,6 +178,24 @@ add:
     txa
     pha
     rts
+
+subtract:
+    pla         ; Извлекаем верхнее значение из стека в A
+    tax         ; Перемещаем из A в X
+    pla         ; Извлекаем следующее значение из стека в A
+    tay         ; Перемещаем из A в Y
+    pla         ; Извлекаем значение, которое будет вычитаемым, в A
+    sta temp    ; Сохраняем вычитаемое во временной переменной
+    pla         ; Извлекаем уменьшаемое из стека в A
+    sec         ; Устанавливаем флаг carry для корректного вычитания
+    sbc temp    ; Выполняем вычитание с borrow из temp
+    pha         ; Сохраняем результат обратно в стек
+    tya         ; Перемещаем Y обратно в A
+    pha         ; Сохраняем второе извлеченное значение обратно в стек
+    txa         ; Перемещаем X обратно в A
+    pha         ; Сохраняем первое извлеченное значение обратно в стек
+    rts         ; Возвращаемся из подпрограммы
+
 
 CreateSprite:
     ; TODO pop next available sprite from the stack
@@ -238,19 +258,37 @@ DeleteSprite:
     ; TODO push sprite to the stack and make it invisible?
     rts
 
+ReadControllers:
+    ; write a "1", then a "0", to CONTROLLER1 ($4016)
+    ; in order to lock in button states
+    LDA #$01
+    STA $4016
+    LDA #$00
+    STA $4016
+
+    ; initialize pad1 to 00000001
+    LDA #%0000001
+    STA pad1
+    
+GetButtonStates:
+    LDA CONTROLLER1       ; Get the next button state
+    LSR A                 ; Shift the accumulator right one bit,
+                          ; dropping the button state from bit 0
+                          ; into the carry flag
+    ROL pad1              ; Shift everything in pad1 left one bit,
+                          ; moving the carry flag into bit 0
+                          ; (because rotation) and bit 7
+                          ; of pad1 into the carry flag
+    BCC GetButtonStates   ; If the carry flag is still 0,
+                          ; continue the loop. If the "1"
+                          ; that we started with drops into
+                          ; the carry flag, we are done.
+
+    rts
+
 PaletteData:
     .byte $22,$29,$1A,$0F,$22,$36,$17,$0f,$22,$30,$21,$0f,$22,$27,$17,$0F  ;background palette data
     .byte $22,$16,$27,$18,$22,$1A,$30,$27,$22,$16,$30,$27,$22,$0F,$36,$17  ;sprite palette data
-
-SpriteData:
-    .byte $08, $00, $00, $08
-    .byte $08, $01, $00, $10
-    .byte $10, $02, $00, $08
-    .byte $10, $03, $00, $10
-    .byte $18, $04, $00, $08
-    .byte $18, $05, $00, $10
-    .byte $20, $06, $00, $08
-    .byte $20, $07, $00, $10
 
 .segment "VECTORS"
     .word NMI

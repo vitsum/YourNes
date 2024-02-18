@@ -31,10 +31,24 @@ void Update(){
   sp3.X = sp3.X + 4;
   sp4.X = sp4.X + 5;
   sp5.X = sp5.X + 6;
-  if(false){
+
+  if(Input.GetKey(KeyCode.Player1.Right)){
     sp6.X = sp6.X + 7;
   }
-  if(true){
+
+  if(Input.GetKey(KeyCode.Player1.Left)){
+    sp6.X = sp6.X - 7;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.Down)){
+    sp6.Y = sp6.Y + 7;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.Up)){
+    sp6.Y = sp6.Y - 7;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.A)){
     sp7.X = sp7.X + 8;
   }
   
