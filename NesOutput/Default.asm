@@ -35,22 +35,30 @@ pad2: .res 1
 _x: .res 1
 ; Byte declaration: _y = 20
 _y: .res 1
-; Sprite declaration: sp0
-sp0: .res 1
-; Sprite declaration: sp1
-sp1: .res 1
-; Sprite declaration: sp2
-sp2: .res 1
-; Sprite declaration: sp3
-sp3: .res 1
-; Sprite declaration: sp4
-sp4: .res 1
-; Sprite declaration: sp5
-sp5: .res 1
-; Sprite declaration: sp6
-sp6: .res 1
-; Sprite declaration: sp7
-sp7: .res 1
+; Byte declaration: speed = 4
+speed: .res 1
+; Sprite declaration: cursorSprite
+cursorSprite: .res 1
+; Sprite declaration: hero1
+hero1: .res 1
+; Sprite declaration: hero2
+hero2: .res 1
+; Sprite declaration: hero3
+hero3: .res 1
+; Sprite declaration: hero4
+hero4: .res 1
+; Sprite declaration: hero5
+hero5: .res 1
+; Sprite declaration: hero6
+hero6: .res 1
+; Sprite declaration: box1
+box1: .res 1
+; Sprite declaration: box2
+box2: .res 1
+; Sprite declaration: box3
+box3: .res 1
+; Sprite declaration: box4
+box4: .res 1
 
 .segment "STARTUP"
 Reset:
@@ -175,15 +183,31 @@ STA _x
 ; initialization of _y with 20
 LDA #20
 STA _y
+; initialization of speed with 4
+LDA #4
+STA speed
     LDA _x
     PHA
     LDA _y
     PHA
     LDA #0
     PHA
+    LDA #2
+    PHA
     JSR CreateSprite
     PLA
-    STA sp0
+    STA cursorSprite
+    LDA _x
+    PHA
+    LDA _y
+    PHA
+    LDA #88
+    PHA
+    LDA #0
+    PHA
+    JSR CreateSprite
+    PLA
+    STA hero1
     LDA _x
     PHA
     LDA #8
@@ -192,13 +216,78 @@ STA _y
     PLA
     PHA
     LDA _y
+    PHA
+    LDA #89
+    PHA
+    LDA #0
+    PHA
+    JSR CreateSprite
+    PLA
+    STA hero2
+    LDA _x
+    PHA
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #104
+    PHA
+    LDA #0
+    PHA
+    JSR CreateSprite
+    PLA
+    STA hero3
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #105
+    PHA
+    LDA #0
+    PHA
+    JSR CreateSprite
+    PLA
+    STA hero4
+    LDA _x
+    PHA
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
     PHA
     LDA #1
     PHA
     JSR CreateSprite
     PLA
-    STA sp1
+    STA hero5
     LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
     PHA
     LDA _y
     PHA
@@ -207,50 +296,45 @@ STA _y
     JSR add
     PLA
     PHA
-    LDA #2
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #121
+    PHA
+    LDA #1
     PHA
     JSR CreateSprite
     PLA
-    STA sp2
+    STA hero6
     LDA _x
     PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
     PHA
     LDA _y
     PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
+    PHA
+    LDA #10
     PHA
     LDA #3
     PHA
     JSR CreateSprite
     PLA
-    STA sp3
+    STA box1
     LDA _x
     PHA
-    LDA _y
-    PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #4
-    PHA
-    JSR CreateSprite
-    PLA
-    STA sp4
-    LDA _x
     PHA
     LDA #8
     PHA
@@ -259,55 +343,28 @@ STA _y
     PHA
     LDA _y
     PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
     PHA
-    LDA #8
+    LDA #11
     PHA
-    JSR add
-    PLA
-    PHA
-    LDA #5
+    LDA #3
     PHA
     JSR CreateSprite
     PLA
-    STA sp5
+    STA box2
     LDA _x
     PHA
-    LDA _y
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #6
-    PHA
-    JSR CreateSprite
-    PLA
-    STA sp6
-    LDA _x
-    PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
     PHA
     LDA _y
     PHA
-    LDA #8
+    LDA #32
     PHA
     JSR add
     PLA
@@ -317,16 +374,44 @@ STA _y
     JSR add
     PLA
     PHA
-    LDA #8
+    LDA #26
     PHA
-    JSR add
-    PLA
-    PHA
-    LDA #7
+    LDA #3
     PHA
     JSR CreateSprite
     PLA
-    STA sp7
+    STA box3
+    LDA _x
+    PHA
+    LDA #32
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #32
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #27
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4
 
 
 Loop:
@@ -334,108 +419,6 @@ Loop:
 
 NMI:
     JSR ReadControllers
-    LDY #3
-    LDX sp0
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp0
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #3
-    LDX sp1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp1
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #3
-    LDX sp2
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #3
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp2
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #3
-    LDX sp3
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #4
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #3
-    LDX sp4
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #5
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #3
-    LDX sp5
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #6
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX sp5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_RIGHT ; Маскирование для проверки кнопки
     BEQ NotPressed0 ; Если кнопка не нажата, переходим к метке NotPressed0
@@ -447,18 +430,18 @@ EndCheck0:
     CMP #$00
     BEQ ENDIF1
     LDY #3
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #7
+    LDA speed
     PHA
     JSR add
     PLA
     LDY #3
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
@@ -475,18 +458,18 @@ EndCheck2:
     CMP #$00
     BEQ ENDIF3
     LDY #3
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #7
+    LDA speed
     PHA
     JSR subtract
     PLA
     LDY #3
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
@@ -503,18 +486,18 @@ EndCheck4:
     CMP #$00
     BEQ ENDIF5
     LDY #0
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #7
+    LDA speed
     PHA
     JSR add
     PLA
     LDY #0
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
@@ -531,18 +514,18 @@ EndCheck6:
     CMP #$00
     BEQ ENDIF7
     LDY #0
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #7
+    LDA speed
     PHA
     JSR subtract
     PLA
     LDY #0
-    LDX sp6
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
@@ -558,24 +541,78 @@ NotPressed8:
 EndCheck8:
     CMP #$00
     BEQ ENDIF9
-    LDY #3
-    LDX sp7
+    LDY #1
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #8
+    LDA #1
     PHA
     JSR add
     PLA
-    LDY #3
-    LDX sp7
+    LDY #1
+    LDX cursorSprite
     STX temp
     LDX #$02
     STX temp2
     STA (temp), Y
 ENDIF9:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_B ; Маскирование для проверки кнопки
+    BEQ NotPressed10 ; Если кнопка не нажата, переходим к метке NotPressed10
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck10 ; Переходим к концу проверки
+NotPressed10:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck10:
+    CMP #$00
+    BEQ ENDIF11
+    LDY #1
+    LDX cursorSprite
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    LDY #1
+    LDX cursorSprite
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF11:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_SELECT ; Маскирование для проверки кнопки
+    BEQ NotPressed12 ; Если кнопка не нажата, переходим к метке NotPressed12
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck12 ; Переходим к концу проверки
+NotPressed12:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck12:
+    CMP #$00
+    BEQ ENDIF13
+    LDA #1
+    STA speed
+ENDIF13:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_START ; Маскирование для проверки кнопки
+    BEQ NotPressed14 ; Если кнопка не нажата, переходим к метке NotPressed14
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck14 ; Переходим к концу проверки
+NotPressed14:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck14:
+    CMP #$00
+    BEQ ENDIF15
+    LDA #4
+    STA speed
+ENDIF15:
 
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
@@ -633,11 +670,13 @@ CreateSprite:
     sta temp2
     ;save arguments to temp3,temp4,temp5
     pla
-    sta temp3
+    sta temp8 ;flip and pallete data (attribute)
     pla
-    sta temp4
+    sta temp3 ;tile
     pla
-    sta temp5
+    sta temp4 ;y
+    pla
+    sta temp5 ;x
     ;dec sprite stack pointer and return sprite index
     ldx #$40 ; (64)
     lda $0300, X
@@ -661,7 +700,7 @@ CreateSprite:
     sta (temp6), Y
 
     ldy #2 ; properties of a sprite default is $00
-    lda #$00
+    lda temp8; load fourth argument (attribute)
     sta (temp6), Y
 
     ldy #3 ; x value of a sprite
@@ -707,8 +746,8 @@ GetButtonStates:
     rts
 
 PaletteData:
-    .byte $22,$29,$1A,$0F,$22,$36,$17,$0f,$22,$30,$21,$0f,$22,$27,$17,$0F  ;background palette data
-    .byte $22,$16,$27,$18,$22,$1A,$30,$27,$22,$16,$30,$27,$22,$0F,$36,$17  ;sprite palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;sprite palette data
 
 .segment "VECTORS"
     .word NMI

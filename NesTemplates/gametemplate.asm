@@ -213,11 +213,13 @@ CreateSprite:
     sta temp2
     ;save arguments to temp3,temp4,temp5
     pla
-    sta temp3
+    sta temp8 ;flip and pallete data (attribute)
     pla
-    sta temp4
+    sta temp3 ;tile
     pla
-    sta temp5
+    sta temp4 ;y
+    pla
+    sta temp5 ;x
     ;dec sprite stack pointer and return sprite index
     ldx #$40 ; (64)
     lda $0300, X
@@ -241,7 +243,7 @@ CreateSprite:
     sta (temp6), Y
 
     ldy #2 ; properties of a sprite default is $00
-    lda #$00
+    lda temp8; load fourth argument (attribute)
     sta (temp6), Y
 
     ldy #3 ; x value of a sprite
@@ -287,8 +289,8 @@ GetButtonStates:
     rts
 
 PaletteData:
-    .byte $22,$29,$1A,$0F,$22,$36,$17,$0f,$22,$30,$21,$0f,$22,$27,$17,$0F  ;background palette data
-    .byte $22,$16,$27,$18,$22,$1A,$30,$27,$22,$16,$30,$27,$22,$0F,$36,$17  ;sprite palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;sprite palette data
 
 .segment "VECTORS"
     .word NMI

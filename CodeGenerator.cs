@@ -224,6 +224,10 @@ namespace NesCompiler
                 {
                     offset = 1;
                 }
+                else if(member.Value == "Attribute")
+                {
+                    offset = 2;
+                }
                 else
                 {
                     throw new Exception($"no field {member.Value} in sprite");
@@ -283,6 +287,9 @@ namespace NesCompiler
                     } else if (member.Value == "Tile")
                     {
                         offset = 1;
+                    } else if (member.Value == "Attribute")
+                    {
+                        offset = 2;
                     }
                     else
                     {
@@ -333,12 +340,15 @@ namespace NesCompiler
                     var xExpression = functionCall.Children[1];
                     var yExpression = functionCall.Children[2];
                     var tileExpression = functionCall.Children[3];
+                    var attributeExpression = functionCall.Children[4];
 
                     GenerateNode(xExpression);
                     _currentSb.AppendLine("    PHA");
                     GenerateNode(yExpression);
                     _currentSb.AppendLine("    PHA");
                     GenerateNode(tileExpression);
+                    _currentSb.AppendLine("    PHA");
+                    GenerateNode(attributeExpression);
                     _currentSb.AppendLine("    PHA");
                     _currentSb.AppendLine("    JSR CreateSprite");
                     _currentSb.AppendLine("    PLA");

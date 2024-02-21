@@ -1,55 +1,69 @@
 byte _x = 20;
 byte _y = 20;
+byte speed = 4;
 
-Sprite sp0;
-Sprite sp1;
-Sprite sp2;
-Sprite sp3;
-Sprite sp4;
-Sprite sp5;
-Sprite sp6;
-Sprite sp7;
+Sprite cursorSprite;
+Sprite hero1;
+Sprite hero2;
+Sprite hero3;
+Sprite hero4;
+Sprite hero5;
+Sprite hero6;
 
+Sprite box1;
+Sprite box2;
+Sprite box3;
+Sprite box4;
 
 void Start(){
 
-  sp0 = CreateSprite(_x, _y, 0); //x, y, tile
-  sp1 = CreateSprite(_x+8, _y, 1);
-  sp2 = CreateSprite(_x, _y+8, 2);
-  sp3 = CreateSprite(_x+8,_y+8,3);
-  sp4 = CreateSprite(_x, _y+8+8, 4);
-  sp5 = CreateSprite(_x+8,_y+8+8,5);
-  sp6 = CreateSprite(_x, _y+8+8+8, 6);
-  sp7 = CreateSprite(_x+8,_y+8+8+8,7);
+  cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
+  hero1 = CreateSprite(_x,_y, 88, 0);
+  hero2 = CreateSprite(_x+8,_y, 89, 0);
+  hero3 = CreateSprite(_x,_y+8, 104, 0);
+  hero4 = CreateSprite(_x+8,_y+8, 105, 0);
+  hero5 = CreateSprite(_x,_y+8+8, 120, 1);
+  hero6 = CreateSprite(_x+8,_y+8+8, 121, 1);
 
+  box1 = CreateSprite(_x +32, _y + 32, 10, 3);
+  box2 = CreateSprite(_x +32+8, _y + 32, 11, 3);
+  box3 = CreateSprite(_x +32, _y + 32+8, 26, 3);
+  box4 = CreateSprite(_x +32+8, _y + 32+8, 27, 3);
+  
 }
 
 void Update(){
-  sp0.X = sp0.X + 1;
-  sp1.X = sp1.X + 2;
-  sp2.X = sp2.X + 3;
-  sp3.X = sp3.X + 4;
-  sp4.X = sp4.X + 5;
-  sp5.X = sp5.X + 6;
 
   if(Input.GetKey(KeyCode.Player1.Right)){
-    sp6.X = sp6.X + 7;
+    cursorSprite.X = cursorSprite.X + speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Left)){
-    sp6.X = sp6.X - 7;
+    cursorSprite.X = cursorSprite.X - speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Down)){
-    sp6.Y = sp6.Y + 7;
+    cursorSprite.Y = cursorSprite.Y + speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Up)){
-    sp6.Y = sp6.Y - 7;
+    cursorSprite.Y = cursorSprite.Y - speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.A)){
-    sp7.X = sp7.X + 8;
+    cursorSprite.Tile = cursorSprite.Tile + 1;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.B)){
+    cursorSprite.Tile = cursorSprite.Tile - 1;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.Select)){
+    speed = 1;
+  }
+
+  if(Input.GetKey(KeyCode.Player1.Start)){
+    speed = 4;
   }
   
 }
