@@ -1,6 +1,6 @@
 byte _x = 20;
 byte _y = 20;
-byte speed = 4;
+byte speed = 2;
 
 Sprite cursorSprite;
 Sprite hero1;
@@ -17,7 +17,7 @@ Sprite box4;
 
 void Start(){
 
-  cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
+  //cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
   hero1 = CreateSprite(_x,_y, 88, 0);
   hero2 = CreateSprite(_x+8,_y, 89, 0);
   hero3 = CreateSprite(_x,_y+8, 104, 0);
@@ -35,35 +35,40 @@ void Start(){
 void Update(){
 
   if(Input.GetKey(KeyCode.Player1.Right)){
-    cursorSprite.X = cursorSprite.X + speed;
+    _x = _x + speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Left)){
-    cursorSprite.X = cursorSprite.X - speed;
+    _x = _x - speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Down)){
-    cursorSprite.Y = cursorSprite.Y + speed;
+    _y = _y + speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Up)){
-    cursorSprite.Y = cursorSprite.Y - speed;
-  }
-
-  if(Input.GetKey(KeyCode.Player1.A)){
-    cursorSprite.Tile = cursorSprite.Tile + 1;
-  }
-
-  if(Input.GetKey(KeyCode.Player1.B)){
-    cursorSprite.Tile = cursorSprite.Tile - 1;
+    _y = _y - speed;
   }
 
   if(Input.GetKey(KeyCode.Player1.Select)){
-    speed = 1;
+    speed = 2;
   }
 
   if(Input.GetKey(KeyCode.Player1.Start)){
-    speed = 4;
+    speed = 3;
   }
+
+  hero1.X = _x;
+  hero1.Y = _y;
+  hero2.X = _x+8;
+  hero2.Y = _y;
+  hero3.X = _x;
+  hero3.Y = _y+8;
+  hero4.X = _x+8;
+  hero4.Y = _y+8;
+  hero5.X = _x;
+  hero5.Y = _y+16;
+  hero6.X = _x+8;
+  hero6.Y = _y+16;
   
 }

@@ -35,7 +35,7 @@ pad2: .res 1
 _x: .res 1
 ; Byte declaration: _y = 20
 _y: .res 1
-; Byte declaration: speed = 4
+; Byte declaration: speed = 2
 speed: .res 1
 ; Sprite declaration: cursorSprite
 cursorSprite: .res 1
@@ -183,20 +183,9 @@ STA _x
 ; initialization of _y with 20
 LDA #20
 STA _y
-; initialization of speed with 4
-LDA #4
+; initialization of speed with 2
+LDA #2
 STA speed
-    LDA _x
-    PHA
-    LDA _y
-    PHA
-    LDA #0
-    PHA
-    LDA #2
-    PHA
-    JSR CreateSprite
-    PLA
-    STA cursorSprite
     LDA _x
     PHA
     LDA _y
@@ -429,23 +418,13 @@ NotPressed0:
 EndCheck0:
     CMP #$00
     BEQ ENDIF1
-    LDY #3
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA _x
     PHA
     LDA speed
     PHA
     JSR add
     PLA
-    LDY #3
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
+    STA _x
 ENDIF1:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_LEFT ; Маскирование для проверки кнопки
@@ -457,23 +436,13 @@ NotPressed2:
 EndCheck2:
     CMP #$00
     BEQ ENDIF3
-    LDY #3
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA _x
     PHA
     LDA speed
     PHA
     JSR subtract
     PLA
-    LDY #3
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
+    STA _x
 ENDIF3:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_DOWN ; Маскирование для проверки кнопки
@@ -485,23 +454,13 @@ NotPressed4:
 EndCheck4:
     CMP #$00
     BEQ ENDIF5
-    LDY #0
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA _y
     PHA
     LDA speed
     PHA
     JSR add
     PLA
-    LDY #0
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
+    STA _y
 ENDIF5:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_UP ; Маскирование для проверки кнопки
@@ -513,26 +472,16 @@ NotPressed6:
 EndCheck6:
     CMP #$00
     BEQ ENDIF7
-    LDY #0
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA _y
     PHA
     LDA speed
     PHA
     JSR subtract
     PLA
-    LDY #0
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
+    STA _y
 ENDIF7:
     LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_A ; Маскирование для проверки кнопки
+    AND #BTN_SELECT ; Маскирование для проверки кнопки
     BEQ NotPressed8 ; Если кнопка не нажата, переходим к метке NotPressed8
     LDA #$01 ; Если кнопка нажата, загружаем 1
     JMP EndCheck8 ; Переходим к концу проверки
@@ -541,26 +490,11 @@ NotPressed8:
 EndCheck8:
     CMP #$00
     BEQ ENDIF9
-    LDY #1
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #1
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
+    LDA #2
+    STA speed
 ENDIF9:
     LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
+    AND #BTN_START ; Маскирование для проверки кнопки
     BEQ NotPressed10 ; Если кнопка не нажата, переходим к метке NotPressed10
     LDA #$01 ; Если кнопка нажата, загружаем 1
     JMP EndCheck10 ; Переходим к концу проверки
@@ -569,50 +503,128 @@ NotPressed10:
 EndCheck10:
     CMP #$00
     BEQ ENDIF11
-    LDY #1
-    LDX cursorSprite
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR subtract
-    PLA
-    LDY #1
-    LDX cursorSprite
+    LDA #3
+    STA speed
+ENDIF11:
+    LDA _x
+    LDY #3
+    LDX hero1
     STX temp
     LDX #$02
     STX temp2
     STA (temp), Y
-ENDIF11:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_SELECT ; Маскирование для проверки кнопки
-    BEQ NotPressed12 ; Если кнопка не нажата, переходим к метке NotPressed12
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck12 ; Переходим к концу проверки
-NotPressed12:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck12:
-    CMP #$00
-    BEQ ENDIF13
-    LDA #1
-    STA speed
-ENDIF13:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_START ; Маскирование для проверки кнопки
-    BEQ NotPressed14 ; Если кнопка не нажата, переходим к метке NotPressed14
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck14 ; Переходим к концу проверки
-NotPressed14:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck14:
-    CMP #$00
-    BEQ ENDIF15
-    LDA #4
-    STA speed
-ENDIF15:
+    LDA _y
+    LDY #0
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    LDY #0
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    LDY #3
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    LDY #3
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
 
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
