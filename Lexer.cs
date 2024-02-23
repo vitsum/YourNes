@@ -32,23 +32,38 @@ namespace NesCompiler
                         continue;
                     }
                 }
-                else if ("(){},;=:.".IndexOf(c) != -1) result.Add(new Token("" + c, ""));
-                else if ("+-*/".IndexOf(c) != -1)
+                else if ("(){},;:.".IndexOf(c) != -1) // Removed '=' from here
+                {
+                    result.Add(new Token("" + c, ""));
+                }
+                else if ("+-*/><=!".IndexOf(c) != -1)
                 {
                     bool flag = false;
-                    if("+-".IndexOf(c) != -1 && i < _text.Length - 1)
+                    if (i < _text.Length - 1)
                     {
-                        var n = _text[i + 1];
-                        if(n == c)
+                        var nextChar = _text[i + 1];
+                        // Check for two-character operators involving '='
+                        if ((c == '=' && nextChar == '=') || // For '=='
+                            (c == '!' && nextChar == '=') || // For '!='
+                            (c == '>' && (nextChar == '=' || nextChar == '>')) || // For '>=' and '>>'
+                            (c == '<' && (nextChar == '=' || nextChar == '<'))) // For '<=' and '<<'
                         {
                             flag = true;
                             i++;
-                            result.Add(new Token("" + c + n, ""));
+                            result.Add(new Token("operation","" + c + nextChar));
                         }
                     }
+                    // This handles the case where '=' is not part of a two-character operator
                     if (!flag)
                     {
-                        result.Add(new Token("operation", "" + c));
+                        if ("+-*/<>".IndexOf(c) != -1)
+                        {
+                            result.Add(new Token("operation", "" + c));
+                        }
+                        else
+                        {
+                            result.Add(new Token("" + c, ""));
+                        }
                     }
                 }
                 else if (c == '"')

@@ -325,6 +325,24 @@ namespace NesCompiler
                 else if (operation.Value.Equals("-"))
                 {
                     _currentSb.AppendLine("    JSR subtract"); // Вызов подпрограммы вычитания
+                } else if (operation.Value.Equals("*"))
+                {
+                    throw new NotImplementedException();
+                } else if (operation.Value.Equals("/"))
+                {
+                    throw new NotImplementedException();
+                } else if (operation.Value.Equals("=="))
+                {
+                    _currentSb.AppendLine("    JSR equal");
+                } else if (operation.Value.Equals(">"))
+                {
+                    _currentSb.AppendLine("    JSR greaterThan");
+                } else if (operation.Value.Equals("<"))
+                {
+                    _currentSb.AppendLine("    JSR lowerThan");
+                } else if (operation.Value.Equals("!="))
+                {
+                    _currentSb.AppendLine("    JSR notEqual");
                 }
 
                 _currentSb.AppendLine("    PLA");

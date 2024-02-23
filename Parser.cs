@@ -371,7 +371,7 @@ namespace NesCompiler
                 else
                 {
                     // Parse a binary operation
-                    while (_tokens[_current].Type == "operation" && ("+-".Contains(_tokens[_current].Value)))
+                    while (_tokens[_current].Type == "operation" && ("+-*/!==>=<=").Contains(_tokens[_current].Value))
                     {
                         var operation = new AstNode("Operation", _tokens[_current++].Value);
                         var leftExpression = new AstNode("Expression");

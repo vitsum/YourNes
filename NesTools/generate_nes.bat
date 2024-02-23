@@ -23,7 +23,7 @@ exit /b
 
 echo Linking object file %~dp1%filename%.o...
 rem Link the object file using ld65
-ld65 "%~dp1%filename%.o" -o "%~dp1%filename%.nes" -t nes
+ld65 "%~dp1%filename%.o" -o "%~dp1%filename%.nes" -C "%~dp0custom_nes.cfg"
 
 rem Check the exit code of ld65
 if errorlevel 1 (
