@@ -45,6 +45,8 @@ g: .res 1
 jumpSpeed: .res 1
 ; Byte declaration: test = 0
 test: .res 1
+; Byte declaration: grounded = 0
+grounded: .res 1
 ; Sprite declaration: cursorSprite
 cursorSprite: .res 1
 ; Sprite declaration: hero1
@@ -63,6 +65,10 @@ hero6: .res 1
 box1: .res 1
 ; Sprite declaration: box2
 box2: .res 1
+; Sprite declaration: box3
+box3: .res 1
+; Sprite declaration: box4
+box4: .res 1
 ; Byte declaration: counter = 0
 counter: .res 1
 
@@ -204,19 +210,22 @@ STA jumpSpeed
 ; initialization of test with 0
 LDA #0
 STA test
+; initialization of grounded with 0
+LDA #0
+STA grounded
 ; initialization of counter with 0
 LDA #0
 STA counter
     LDA _x
     PHA
-    LDA #32
+    LDA #100
     PHA
     JSR add
     PLA
     PHA
     LDA _y
     PHA
-    LDA #32
+    LDA #165
     PHA
     JSR add
     PLA
@@ -230,7 +239,7 @@ STA counter
     STA box1
     LDA _x
     PHA
-    LDA #32
+    LDA #100
     PHA
     JSR add
     PLA
@@ -242,7 +251,7 @@ STA counter
     PHA
     LDA _y
     PHA
-    LDA #32
+    LDA #165
     PHA
     JSR add
     PLA
@@ -365,6 +374,43 @@ STA counter
     JSR CreateSprite
     PLA
     STA hero6
+    LDA _x
+    PHA
+    LDA #140
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #165
+    PHA
+    LDA #26
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3
+    LDA _x
+    PHA
+    LDA #140
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #165
+    PHA
+    LDA #27
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4
 
 
 Loop:
@@ -388,7 +434,9 @@ NMI:
     JSR equal
     PLA
     CMP #$00
-    BEQ ENDIF0
+    BNE SKIP_TO_ELSE0
+    JMP ENDIF0
+SKIP_TO_ELSE0:
     LDA #0
     STA counter
     LDA vSpeed
@@ -398,6 +446,7 @@ NMI:
     JSR add
     PLA
     STA vSpeed
+    JMP ENDIF0
 ENDIF0:
     LDA vSpeed
     PHA
@@ -406,9 +455,12 @@ ENDIF0:
     JSR greaterThan
     PLA
     CMP #$00
-    BEQ ENDIF1
+    BNE SKIP_TO_ELSE1
+    JMP ENDIF1
+SKIP_TO_ELSE1:
     LDA #254
     STA vSpeed
+    JMP ENDIF1
 ENDIF1:
     LDA vSpeed
     PHA
@@ -417,7 +469,9 @@ ENDIF1:
     JSR greaterThan
     PLA
     CMP #$00
-    BEQ ENDIF2
+    BNE SKIP_TO_ELSE2
+    JMP ENDIF2
+SKIP_TO_ELSE2:
     LDA vSpeed
     PHA
     LDA #128
@@ -430,6 +484,7 @@ ENDIF1:
     JSR add
     PLA
     STA _y
+    JMP ENDIF2
 ENDIF2:
     LDA vSpeed
     PHA
@@ -438,7 +493,9 @@ ENDIF2:
     JSR lowerThan
     PLA
     CMP #$00
-    BEQ ENDIF3
+    BNE SKIP_TO_ELSE3
+    JMP ENDIF3
+SKIP_TO_ELSE3:
     LDA vSpeed
     PHA
     LDA _y
@@ -451,7 +508,10 @@ ENDIF2:
     JSR subtract
     PLA
     STA _y
+    JMP ENDIF3
 ENDIF3:
+    LDA #0
+    STA grounded
     LDA _y
     PHA
     LDA #200
@@ -459,2567 +519,79 @@ ENDIF3:
     JSR greaterThan
     PLA
     CMP #$00
-    BEQ ENDIF4
+    BNE SKIP_TO_ELSE4
+    JMP ENDIF4
+SKIP_TO_ELSE4:
     LDA #200
     STA _y
     LDA #128
     STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF4
 ENDIF4:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_RIGHT ; Маскирование для проверки кнопки
-    BEQ NotPressed5 ; Если кнопка не нажата, переходим к метке NotPressed5
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck5 ; Переходим к концу проверки
-NotPressed5:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck5:
-    CMP #$00
-    BEQ ENDIF6
-    LDA _x
+    LDA vSpeed
     PHA
-    LDA speed
+    LDA #128
     PHA
-    JSR add
-    PLA
-    STA _x
-ENDIF6:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_LEFT ; Маскирование для проверки кнопки
-    BEQ NotPressed7 ; Если кнопка не нажата, переходим к метке NotPressed7
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck7 ; Переходим к концу проверки
-NotPressed7:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck7:
-    CMP #$00
-    BEQ ENDIF8
-    LDA _x
-    PHA
-    LDA speed
-    PHA
-    JSR subtract
-    PLA
-    STA _x
-ENDIF8:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_A ; Маскирование для проверки кнопки
-    BEQ NotPressed9 ; Если кнопка не нажата, переходим к метке NotPressed9
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck9 ; Переходим к концу проверки
-NotPressed9:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck9:
-    CMP #$00
-    BEQ ENDIF10
-    LDA _y
-    PHA
-    LDA #200
-    PHA
-    JSR equal
+    JSR greaterThan
     PLA
     CMP #$00
-    BEQ ENDIF11
-    LDA jumpSpeed
-    STA vSpeed
-    LDA #0
-    STA counter
-ENDIF11:
-ENDIF10:
-    LDA _x
-    LDY #3
-    LDX hero1
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
-    LDY #0
-    LDX hero1
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _x
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX hero2
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
-    LDY #0
-    LDX hero2
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _x
-    LDY #3
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _x
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    LDY #3
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _x
-    LDY #3
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
-    PHA
-    LDA #16
-    PHA
-    JSR add
-    PLA
+    BNE SKIP_TO_ELSE5
+    JMP ENDIF5
+SKIP_TO_ELSE5:
     LDY #0
     LDX hero5
     STX temp
     LDX #$02
     STX temp2
-    STA (temp), Y
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE6
+    JMP ENDIF6
+SKIP_TO_ELSE6:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE7
+    JMP ENDIF7
+SKIP_TO_ELSE7:
     LDA _x
     PHA
     LDA #8
     PHA
     JSR add
     PLA
-    LDY #3
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA _y
     PHA
-    LDA #16
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed12 ; Если кнопка не нажата, переходим к метке NotPressed12
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck12 ; Переходим к концу проверки
-NotPressed12:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck12:
-    CMP #$00
-    BEQ ENDIF13
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF13:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed14 ; Если кнопка не нажата, переходим к метке NotPressed14
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck14 ; Переходим к концу проверки
-NotPressed14:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck14:
-    CMP #$00
-    BEQ ENDIF15
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF15:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed16 ; Если кнопка не нажата, переходим к метке NotPressed16
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck16 ; Переходим к концу проверки
-NotPressed16:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck16:
-    CMP #$00
-    BEQ ENDIF17
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF17:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed18 ; Если кнопка не нажата, переходим к метке NotPressed18
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck18 ; Переходим к концу проверки
-NotPressed18:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck18:
-    CMP #$00
-    BEQ ENDIF19
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF19:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed20 ; Если кнопка не нажата, переходим к метке NotPressed20
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck20 ; Переходим к концу проверки
-NotPressed20:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck20:
-    CMP #$00
-    BEQ ENDIF21
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF21:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed22 ; Если кнопка не нажата, переходим к метке NotPressed22
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck22 ; Переходим к концу проверки
-NotPressed22:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck22:
-    CMP #$00
-    BEQ ENDIF23
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF23:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed24 ; Если кнопка не нажата, переходим к метке NotPressed24
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck24 ; Переходим к концу проверки
-NotPressed24:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck24:
-    CMP #$00
-    BEQ ENDIF25
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF25:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed26 ; Если кнопка не нажата, переходим к метке NotPressed26
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck26 ; Переходим к концу проверки
-NotPressed26:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck26:
-    CMP #$00
-    BEQ ENDIF27
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF27:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed28 ; Если кнопка не нажата, переходим к метке NotPressed28
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck28 ; Переходим к концу проверки
-NotPressed28:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck28:
-    CMP #$00
-    BEQ ENDIF29
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF29:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed30 ; Если кнопка не нажата, переходим к метке NotPressed30
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck30 ; Переходим к концу проверки
-NotPressed30:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck30:
-    CMP #$00
-    BEQ ENDIF31
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF31:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed32 ; Если кнопка не нажата, переходим к метке NotPressed32
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck32 ; Переходим к концу проверки
-NotPressed32:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck32:
-    CMP #$00
-    BEQ ENDIF33
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF33:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed34 ; Если кнопка не нажата, переходим к метке NotPressed34
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck34 ; Переходим к концу проверки
-NotPressed34:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck34:
-    CMP #$00
-    BEQ ENDIF35
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF35:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed36 ; Если кнопка не нажата, переходим к метке NotPressed36
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck36 ; Переходим к концу проверки
-NotPressed36:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck36:
-    CMP #$00
-    BEQ ENDIF37
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF37:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed38 ; Если кнопка не нажата, переходим к метке NotPressed38
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck38 ; Переходим к концу проверки
-NotPressed38:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck38:
-    CMP #$00
-    BEQ ENDIF39
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF39:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed40 ; Если кнопка не нажата, переходим к метке NotPressed40
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck40 ; Переходим к концу проверки
-NotPressed40:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck40:
-    CMP #$00
-    BEQ ENDIF41
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF41:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed42 ; Если кнопка не нажата, переходим к метке NotPressed42
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck42 ; Переходим к концу проверки
-NotPressed42:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck42:
-    CMP #$00
-    BEQ ENDIF43
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF43:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed44 ; Если кнопка не нажата, переходим к метке NotPressed44
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck44 ; Переходим к концу проверки
-NotPressed44:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck44:
-    CMP #$00
-    BEQ ENDIF45
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF45:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed46 ; Если кнопка не нажата, переходим к метке NotPressed46
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck46 ; Переходим к концу проверки
-NotPressed46:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck46:
-    CMP #$00
-    BEQ ENDIF47
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF47:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed48 ; Если кнопка не нажата, переходим к метке NotPressed48
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck48 ; Переходим к концу проверки
-NotPressed48:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck48:
-    CMP #$00
-    BEQ ENDIF49
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF49:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed50 ; Если кнопка не нажата, переходим к метке NotPressed50
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck50 ; Переходим к концу проверки
-NotPressed50:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck50:
-    CMP #$00
-    BEQ ENDIF51
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF51:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed52 ; Если кнопка не нажата, переходим к метке NotPressed52
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck52 ; Переходим к концу проверки
-NotPressed52:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck52:
-    CMP #$00
-    BEQ ENDIF53
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF53:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed54 ; Если кнопка не нажата, переходим к метке NotPressed54
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck54 ; Переходим к концу проверки
-NotPressed54:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck54:
-    CMP #$00
-    BEQ ENDIF55
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF55:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed56 ; Если кнопка не нажата, переходим к метке NotPressed56
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck56 ; Переходим к концу проверки
-NotPressed56:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck56:
-    CMP #$00
-    BEQ ENDIF57
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF57:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed58 ; Если кнопка не нажата, переходим к метке NotPressed58
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck58 ; Переходим к концу проверки
-NotPressed58:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck58:
-    CMP #$00
-    BEQ ENDIF59
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF59:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed60 ; Если кнопка не нажата, переходим к метке NotPressed60
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck60 ; Переходим к концу проверки
-NotPressed60:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck60:
-    CMP #$00
-    BEQ ENDIF61
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF61:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed62 ; Если кнопка не нажата, переходим к метке NotPressed62
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck62 ; Переходим к концу проверки
-NotPressed62:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck62:
-    CMP #$00
-    BEQ ENDIF63
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF63:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_B ; Маскирование для проверки кнопки
-    BEQ NotPressed64 ; Если кнопка не нажата, переходим к метке NotPressed64
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck64 ; Переходим к концу проверки
-NotPressed64:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck64:
-    CMP #$00
-    BEQ ENDIF65
-    LDA test
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #3
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #2
-    PHA
-    JSR add
-    PLA
-    STA test
-ENDIF65:
     LDY #3
     LDX box1
     STX temp
@@ -3027,12 +599,339 @@ ENDIF65:
     STX temp2
     LDA (temp), Y
     PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE8
+    JMP ENDIF8
+SKIP_TO_ELSE8:
+    LDY #3
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE9
+    JMP ENDIF9
+SKIP_TO_ELSE9:
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
     LDA #1
+    STA grounded
+    JMP ENDIF9
+ENDIF9:
+    JMP ENDIF8
+ENDIF8:
+    JMP ENDIF7
+ENDIF7:
+    JMP ENDIF6
+ENDIF6:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE10
+    JMP ENDIF10
+SKIP_TO_ELSE10:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #0
+    LDX box3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE11
+    JMP ENDIF11
+SKIP_TO_ELSE11:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE12
+    JMP ENDIF12
+SKIP_TO_ELSE12:
+    LDY #3
+    LDX box4
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE13
+    JMP ENDIF13
+SKIP_TO_ELSE13:
+    LDY #0
+    LDX box3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF13
+ENDIF13:
+    JMP ENDIF12
+ENDIF12:
+    JMP ENDIF11
+ENDIF11:
+    JMP ENDIF10
+ENDIF10:
+    JMP ENDIF5
+ENDIF5:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_RIGHT ; Маскирование для проверки кнопки
+    BEQ NotPressed14 ; Если кнопка не нажата, переходим к метке NotPressed14
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck14 ; Переходим к концу проверки
+NotPressed14:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck14:
+    CMP #$00
+    BNE SKIP_TO_ELSE15
+    JMP ENDIF15
+SKIP_TO_ELSE15:
+    LDA _x
+    PHA
+    LDA speed
+    PHA
+    JSR add
+    PLA
+    STA _x
+    JMP ENDIF15
+ENDIF15:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_LEFT ; Маскирование для проверки кнопки
+    BEQ NotPressed16 ; Если кнопка не нажата, переходим к метке NotPressed16
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck16 ; Переходим к концу проверки
+NotPressed16:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck16:
+    CMP #$00
+    BNE SKIP_TO_ELSE17
+    JMP ENDIF17
+SKIP_TO_ELSE17:
+    LDA _x
+    PHA
+    LDA speed
+    PHA
+    JSR subtract
+    PLA
+    STA _x
+    JMP ENDIF17
+ENDIF17:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_A ; Маскирование для проверки кнопки
+    BEQ NotPressed18 ; Если кнопка не нажата, переходим к метке NotPressed18
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck18 ; Переходим к концу проверки
+NotPressed18:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck18:
+    CMP #$00
+    BNE SKIP_TO_ELSE19
+    JMP ENDIF19
+SKIP_TO_ELSE19:
+    LDA grounded
+    CMP #$00
+    BNE SKIP_TO_ELSE20
+    JMP ENDIF20
+SKIP_TO_ELSE20:
+    LDA jumpSpeed
+    STA vSpeed
+    LDA #0
+    STA counter
+    JMP ENDIF20
+ENDIF20:
+    JMP ENDIF19
+ENDIF19:
+    LDA _x
+    LDY #3
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    LDY #0
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
     PHA
     JSR add
     PLA
     LDY #3
-    LDX box1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    LDY #0
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    LDY #3
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    LDY #3
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX hero6
     STX temp
     LDX #$02
     STX temp2

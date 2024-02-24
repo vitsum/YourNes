@@ -6,6 +6,8 @@ byte g = 1;
 byte jumpSpeed = 125;
 byte test = 0;
 
+byte grounded = 0;
+
 Sprite cursorSprite;
 Sprite hero1;
 Sprite hero2;
@@ -16,14 +18,14 @@ Sprite hero6;
 
 Sprite box1;
 Sprite box2;
-//Sprite box3;
-//Sprite box4;
+Sprite box3;
+Sprite box4;
 
 byte counter = 0;
 
 void Start(){
-  box1 = CreateSprite(_x +32, _y + 32, 10, 3);
-  box2 = CreateSprite(_x +32+8, _y + 32, 11, 3);
+  box1 = CreateSprite(_x +100, _y + 165, 10, 3);
+  box2 = CreateSprite(_x +100+8, _y + 165, 11, 3);
 
   //cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
   hero1 = CreateSprite(_x,_y, 88, 0);
@@ -34,8 +36,8 @@ void Start(){
   hero6 = CreateSprite(_x+8,_y+8+8, 121, 1);
 
 
-//  box3 = CreateSprite(_x +32, _y + 32+8, 26, 3);
-//  box4 = CreateSprite(_x +32+8, _y + 32+8, 27, 3);
+  box3 = CreateSprite(_x +140, 165, 26, 3);
+  box4 = CreateSprite(_x +140+8, 165, 27, 3);
   
 }
 
@@ -63,12 +65,43 @@ void Update(){
     _y = vSpeed + _y - 128;
   }
 
+
+  grounded = 0;
+
   if(_y > 200){
     _y = 200;
     vSpeed = 128;
+    grounded = 1;
   }
 
-    if(Input.GetKey(KeyCode.Player1.Right)){
+  if(vSpeed > 128){ //если падаем
+    if(hero5.Y < box1.Y){ // если игрок выше нижней границы бокса
+      if(hero5.Y +8 > box1.Y){ //если игрок ниже верхней границы бокса
+        if(_x + 8 > box1.X){ //если середина игрока больше левой границы бокса
+          if(box2.X > _x){ //если середина игрока меньше правой границы бокса
+            _y = box1.Y - 24; //устанавливаем позицию игрока чтобы он стоял на платформе
+            vSpeed = 128; //обнуляем вертикальную скорость
+            grounded = 1; //состояние приземлен
+          }
+        }
+      }
+    }
+
+    if(hero5.Y < box3.Y){ // если игрок выше нижней границы бокса
+      if(hero5.Y +8 > box3.Y){ //если игрок ниже верхней границы бокса
+        if(_x + 8 > box3.X){ //если середина игрока больше левой границы бокса
+          if(box4.X > _x){ //если середина игрока меньше правой границы бокса
+            _y = box3.Y - 24; //устанавливаем позицию игрока чтобы он стоял на платформе
+            vSpeed = 128; //обнуляем вертикальную скорость
+            grounded = 1; //состояние приземлен
+          }
+        }
+      }
+    }
+
+  }
+
+  if(Input.GetKey(KeyCode.Player1.Right)){
     
       _x = _x + speed;
     
@@ -83,7 +116,7 @@ void Update(){
   }
 
   if(Input.GetKey(KeyCode.Player1.A)){
-    if(_y == 200){
+    if(grounded){
       vSpeed = jumpSpeed;
       counter = 0;
     }
@@ -103,92 +136,10 @@ void Update(){
   hero6.X = _x+8;
   hero6.Y = _y+16;
 
-  if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
 
 
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
-    if(Input.GetKey(KeyCode.Player1.B)){
-    test = test + 1 + 2 - 3 - 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2- 2 + 2;
-  }
 
-
-  box1.X = box1.X + 1;
+  //box1.X = box1.X + 1;
+  //box2.X = box2.X + 1;
   
 }

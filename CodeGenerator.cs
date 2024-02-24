@@ -494,35 +494,41 @@ namespace NesCompiler
 
             // Создание меток для ветвления
             string elseLabel = $"ELSE{_labelCounter}";
-            string endIfLabel = $"ENDIF{_labelCounter++}";
+            string endIfLabel = $"ENDIF{_labelCounter}";
+            string skipToElseLabel = $"SKIP_TO_ELSE{_labelCounter++}"; // Для обхода диапазона BEQ
 
             // Предполагаем, что результат условия находится в аккумуляторе и ветвимся, если false
             _currentSb.AppendLine("    CMP #$00"); // Сравнение с false
+            _currentSb.AppendLine($"    BNE {skipToElseLabel}"); // Если условие истинно, пропускаем ELSE
+
+            // Если есть блок else, ветвимся к нему, если условие ложно
             if (falseBlock != null)
             {
-                // Если есть блок else, ветвимся к нему, если условие ложно
-                _currentSb.AppendLine($"    BEQ {elseLabel}");
+                _currentSb.AppendLine($"    JMP {elseLabel}");
             }
-            else
+            else // Если блока else нет, прямой переход к концу блока if
             {
-                // Если блока else нет, просто пропускаем блок if
-                _currentSb.AppendLine($"    BEQ {endIfLabel}");
+                _currentSb.AppendLine($"    JMP {endIfLabel}");
             }
 
+            _currentSb.AppendLine($"{skipToElseLabel}:");
             // Генерация кода для блока if
             GenerateNode(trueBlock);
 
+            // Добавляем переход к концу if для пропуска блока else
+            _currentSb.AppendLine($"    JMP {endIfLabel}");
+
             if (falseBlock != null)
             {
-                // Если есть блок else, добавляем переход к концу if и метку для else
-                _currentSb.AppendLine($"    JMP {endIfLabel}");
                 _currentSb.AppendLine($"{elseLabel}:");
+                // Генерация кода для блока else
                 GenerateNode(falseBlock);
             }
 
             // Метка окончания конструкции if-else
             _currentSb.AppendLine($"{endIfLabel}:");
         }
+
 
 
 
