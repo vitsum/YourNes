@@ -47,8 +47,8 @@ jumpSpeed: .res 1
 test: .res 1
 ; Byte declaration: grounded = 0
 grounded: .res 1
-; Sprite declaration: cursorSprite
-cursorSprite: .res 1
+; Byte declaration: flipped = 0
+flipped: .res 1
 ; Sprite declaration: hero1
 hero1: .res 1
 ; Sprite declaration: hero2
@@ -61,16 +61,68 @@ hero4: .res 1
 hero5: .res 1
 ; Sprite declaration: hero6
 hero6: .res 1
-; Sprite declaration: box1
-box1: .res 1
-; Sprite declaration: box2
-box2: .res 1
-; Sprite declaration: box3
-box3: .res 1
-; Sprite declaration: box4
-box4: .res 1
+; Sprite declaration: box1_1
+box1_1: .res 1
+; Sprite declaration: box1_2
+box1_2: .res 1
+; Sprite declaration: box1_3
+box1_3: .res 1
+; Sprite declaration: box1_4
+box1_4: .res 1
+; Sprite declaration: box2_1
+box2_1: .res 1
+; Sprite declaration: box2_2
+box2_2: .res 1
+; Sprite declaration: box2_3
+box2_3: .res 1
+; Sprite declaration: box2_4
+box2_4: .res 1
+; Sprite declaration: box3_1
+box3_1: .res 1
+; Sprite declaration: box3_2
+box3_2: .res 1
+; Sprite declaration: box3_3
+box3_3: .res 1
+; Sprite declaration: box3_4
+box3_4: .res 1
+; Sprite declaration: box4_1
+box4_1: .res 1
+; Sprite declaration: box4_2
+box4_2: .res 1
+; Sprite declaration: box4_3
+box4_3: .res 1
+; Sprite declaration: box4_4
+box4_4: .res 1
+; Sprite declaration: box5_1
+box5_1: .res 1
+; Sprite declaration: box5_2
+box5_2: .res 1
+; Sprite declaration: box5_3
+box5_3: .res 1
+; Sprite declaration: box5_4
+box5_4: .res 1
+; Sprite declaration: sbox1
+sbox1: .res 1
+; Sprite declaration: sbox2
+sbox2: .res 1
+; Sprite declaration: sbox3
+sbox3: .res 1
 ; Byte declaration: counter = 0
 counter: .res 1
+; Byte declaration: animCounter = 0
+animCounter: .res 1
+; Byte declaration: animFrame = 0
+animFrame: .res 1
+; Byte declaration: eyesState = 0
+eyesState: .res 1
+; Byte declaration: moving = 0
+moving: .res 1
+; Byte declaration: platformMovingCounter = 0
+platformMovingCounter: .res 1
+; Byte declaration: platformUp = 0
+platformUp: .res 1
+; Byte declaration: init = 0
+init: .res 1
 
 .segment "STARTUP"
 Reset:
@@ -213,56 +265,33 @@ STA test
 ; initialization of grounded with 0
 LDA #0
 STA grounded
+; initialization of flipped with 0
+LDA #0
+STA flipped
 ; initialization of counter with 0
 LDA #0
 STA counter
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #10
-    PHA
-    LDA #3
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box1
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #11
-    PHA
-    LDA #3
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box2
+; initialization of animCounter with 0
+LDA #0
+STA animCounter
+; initialization of animFrame with 0
+LDA #0
+STA animFrame
+; initialization of eyesState with 0
+LDA #0
+STA eyesState
+; initialization of moving with 0
+LDA #0
+STA moving
+; initialization of platformMovingCounter with 0
+LDA #0
+STA platformMovingCounter
+; initialization of platformUp with 0
+LDA #0
+STA platformUp
+; initialization of init with 0
+LDA #0
+STA init
     LDA _x
     PHA
     LDA _y
@@ -376,6 +405,110 @@ STA counter
     STA hero6
     LDA _x
     PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #165
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #52
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box1_1
+    LDA _x
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #165
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #53
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box1_2
+    LDA _x
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #165
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #68
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box1_3
+    LDA _x
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #165
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #69
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box1_4
+    LDA _x
+    PHA
     LDA #140
     PHA
     JSR add
@@ -383,13 +516,13 @@ STA counter
     PHA
     LDA #165
     PHA
-    LDA #26
+    LDA #52
     PHA
     LDA #3
     PHA
     JSR CreateSprite
     PLA
-    STA box3
+    STA box2_1
     LDA _x
     PHA
     LDA #140
@@ -404,13 +537,374 @@ STA counter
     PHA
     LDA #165
     PHA
-    LDA #27
+    LDA #53
     PHA
     LDA #3
     PHA
     JSR CreateSprite
     PLA
-    STA box4
+    STA box2_2
+    LDA _x
+    PHA
+    LDA #140
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #165
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #68
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box2_3
+    LDA _x
+    PHA
+    LDA #140
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #165
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #69
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box2_4
+    LDA _x
+    PHA
+    LDA #50
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #52
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3_1
+    LDA _x
+    PHA
+    LDA #50
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #53
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3_2
+    LDA _x
+    PHA
+    LDA #50
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #68
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3_3
+    LDA _x
+    PHA
+    LDA #50
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #100
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #69
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3_4
+    LDA _x
+    PHA
+    LDA #180
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
+    PHA
+    LDA #52
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4_1
+    LDA _x
+    PHA
+    LDA #180
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
+    PHA
+    LDA #53
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4_2
+    LDA _x
+    PHA
+    LDA #180
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #68
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4_3
+    LDA _x
+    PHA
+    LDA #180
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #69
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4_4
+    LDA _x
+    PHA
+    LDA #70
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #130
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #52
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box5_1
+    LDA _x
+    PHA
+    LDA #70
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #130
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #53
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box5_2
+    LDA _x
+    PHA
+    LDA #70
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #130
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #68
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box5_3
+    LDA _x
+    PHA
+    LDA #70
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA _y
+    PHA
+    LDA #130
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #69
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box5_4
+    LDA #20
+    PHA
+    LDA #150
+    PHA
+    LDA #50
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA sbox1
+    LDA #28
+    PHA
+    LDA #150
+    PHA
+    LDA #50
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA sbox2
 
 
 Loop:
@@ -420,16 +914,9 @@ NMI:
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
     JSR ReadControllers
-    LDA counter
+    LDA init
     PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    STA counter
-    LDA counter
-    PHA
-    LDA #7
+    LDA #0
     PHA
     JSR equal
     PLA
@@ -437,6 +924,210 @@ NMI:
     BNE SKIP_TO_ELSE0
     JMP ENDIF0
 SKIP_TO_ELSE0:
+    LDA #1
+    STA init
+    LDA #36
+    PHA
+    LDA #150
+    PHA
+    LDA #50
+    PHA
+    LDA #2
+    PHA
+    JSR CreateSprite
+    PLA
+    STA sbox3
+    JMP ENDIF0
+ENDIF0:
+    LDA counter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA counter
+    LDA platformMovingCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA platformMovingCounter
+    LDA platformMovingCounter
+    PHA
+    LDA #30
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE1
+    JMP ENDIF1
+SKIP_TO_ELSE1:
+    LDA #0
+    STA platformMovingCounter
+    LDA #1
+    PHA
+    LDA platformUp
+    PHA
+    JSR subtract
+    PLA
+    STA platformUp
+    JMP ENDIF1
+ENDIF1:
+    LDA platformUp
+    CMP #$00
+    BNE SKIP_TO_ELSE2
+    JMP ELSE2
+SKIP_TO_ELSE2:
+    LDY #0
+    LDX box1_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    LDY #0
+    LDX box1_1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    LDY #0
+    LDX box1_2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    LDY #0
+    LDX box1_3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_4
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    LDY #0
+    LDX box1_4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF2
+ELSE2:
+    LDY #0
+    LDX box1_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX box1_1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX box1_2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_3
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX box1_3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1_4
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX box1_4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF2:
+    LDA counter
+    PHA
+    LDA #7
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE3
+    JMP ENDIF3
+SKIP_TO_ELSE3:
     LDA #0
     STA counter
     LDA vSpeed
@@ -446,75 +1137,11 @@ SKIP_TO_ELSE0:
     JSR add
     PLA
     STA vSpeed
-    JMP ENDIF0
-ENDIF0:
-    LDA vSpeed
-    PHA
-    LDA #254
-    PHA
-    JSR greaterThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE1
-    JMP ENDIF1
-SKIP_TO_ELSE1:
-    LDA #254
-    STA vSpeed
-    JMP ENDIF1
-ENDIF1:
-    LDA vSpeed
-    PHA
-    LDA #128
-    PHA
-    JSR greaterThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE2
-    JMP ENDIF2
-SKIP_TO_ELSE2:
-    LDA vSpeed
-    PHA
-    LDA #128
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA _y
-    PHA
-    JSR add
-    PLA
-    STA _y
-    JMP ENDIF2
-ENDIF2:
-    LDA vSpeed
-    PHA
-    LDA #128
-    PHA
-    JSR lowerThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE3
-    JMP ENDIF3
-SKIP_TO_ELSE3:
-    LDA vSpeed
-    PHA
-    LDA _y
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #128
-    PHA
-    JSR subtract
-    PLA
-    STA _y
     JMP ENDIF3
 ENDIF3:
-    LDA #0
-    STA grounded
-    LDA _y
+    LDA vSpeed
     PHA
-    LDA #200
+    LDA #254
     PHA
     JSR greaterThan
     PLA
@@ -522,12 +1149,8 @@ ENDIF3:
     BNE SKIP_TO_ELSE4
     JMP ENDIF4
 SKIP_TO_ELSE4:
-    LDA #200
-    STA _y
-    LDA #128
+    LDA #254
     STA vSpeed
-    LDA #1
-    STA grounded
     JMP ENDIF4
 ENDIF4:
     LDA vSpeed
@@ -540,19 +1163,23 @@ ENDIF4:
     BNE SKIP_TO_ELSE5
     JMP ENDIF5
 SKIP_TO_ELSE5:
-    LDY #0
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA vSpeed
     PHA
-    LDY #0
-    LDX box1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA #128
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA _y
+    PHA
+    JSR add
+    PLA
+    STA _y
+    JMP ENDIF5
+ENDIF5:
+    LDA vSpeed
+    PHA
+    LDA #128
     PHA
     JSR lowerThan
     PLA
@@ -560,24 +1187,25 @@ SKIP_TO_ELSE5:
     BNE SKIP_TO_ELSE6
     JMP ENDIF6
 SKIP_TO_ELSE6:
-    LDY #0
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA vSpeed
     PHA
-    LDA #8
+    LDA _y
     PHA
     JSR add
     PLA
     PHA
-    LDY #0
-    LDX box1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA #128
+    PHA
+    JSR subtract
+    PLA
+    STA _y
+    JMP ENDIF6
+ENDIF6:
+    LDA #0
+    STA grounded
+    LDA _y
+    PHA
+    LDA #200
     PHA
     JSR greaterThan
     PLA
@@ -585,19 +1213,17 @@ SKIP_TO_ELSE6:
     BNE SKIP_TO_ELSE7
     JMP ENDIF7
 SKIP_TO_ELSE7:
-    LDA _x
+    LDA #200
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF7
+ENDIF7:
+    LDA vSpeed
     PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDY #3
-    LDX box1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA #128
     PHA
     JSR greaterThan
     PLA
@@ -605,45 +1231,6 @@ SKIP_TO_ELSE7:
     BNE SKIP_TO_ELSE8
     JMP ENDIF8
 SKIP_TO_ELSE8:
-    LDY #3
-    LDX box2
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA _x
-    PHA
-    JSR greaterThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE9
-    JMP ENDIF9
-SKIP_TO_ELSE9:
-    LDY #0
-    LDX box1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #24
-    PHA
-    JSR subtract
-    PLA
-    STA _y
-    LDA #128
-    STA vSpeed
-    LDA #1
-    STA grounded
-    JMP ENDIF9
-ENDIF9:
-    JMP ENDIF8
-ENDIF8:
-    JMP ENDIF7
-ENDIF7:
-    JMP ENDIF6
-ENDIF6:
     LDY #0
     LDX hero5
     STX temp
@@ -652,7 +1239,7 @@ ENDIF6:
     LDA (temp), Y
     PHA
     LDY #0
-    LDX box3
+    LDX box1_1
     STX temp
     LDX #$02
     STX temp2
@@ -661,9 +1248,9 @@ ENDIF6:
     JSR lowerThan
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE10
-    JMP ENDIF10
-SKIP_TO_ELSE10:
+    BNE SKIP_TO_ELSE9
+    JMP ENDIF9
+SKIP_TO_ELSE9:
     LDY #0
     LDX hero5
     STX temp
@@ -676,8 +1263,33 @@ SKIP_TO_ELSE10:
     JSR add
     PLA
     PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    PHA
     LDY #0
-    LDX box3
+    LDX box1_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE10
+    JMP ENDIF10
+SKIP_TO_ELSE10:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box1_1
     STX temp
     LDX #$02
     STX temp2
@@ -689,19 +1301,14 @@ SKIP_TO_ELSE10:
     BNE SKIP_TO_ELSE11
     JMP ENDIF11
 SKIP_TO_ELSE11:
-    LDA _x
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
     LDY #3
-    LDX box3
+    LDX box1_2
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
+    PHA
+    LDA _x
     PHA
     JSR greaterThan
     PLA
@@ -709,23 +1316,8 @@ SKIP_TO_ELSE11:
     BNE SKIP_TO_ELSE12
     JMP ENDIF12
 SKIP_TO_ELSE12:
-    LDY #3
-    LDX box4
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA _x
-    PHA
-    JSR greaterThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE13
-    JMP ENDIF13
-SKIP_TO_ELSE13:
     LDY #0
-    LDX box3
+    LDX box1_1
     STX temp
     LDX #$02
     STX temp2
@@ -735,33 +1327,500 @@ SKIP_TO_ELSE13:
     PHA
     JSR subtract
     PLA
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
     STA _y
     LDA #128
     STA vSpeed
     LDA #1
     STA grounded
-    JMP ENDIF13
-ENDIF13:
     JMP ENDIF12
 ENDIF12:
     JMP ENDIF11
 ENDIF11:
     JMP ENDIF10
 ENDIF10:
-    JMP ENDIF5
-ENDIF5:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_RIGHT ; Маскирование для проверки кнопки
-    BEQ NotPressed14 ; Если кнопка не нажата, переходим к метке NotPressed14
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck14 ; Переходим к концу проверки
-NotPressed14:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck14:
+    JMP ENDIF9
+ENDIF9:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box2_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE13
+    JMP ENDIF13
+SKIP_TO_ELSE13:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDY #0
+    LDX box2_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE14
+    JMP ENDIF14
+SKIP_TO_ELSE14:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box2_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
     CMP #$00
     BNE SKIP_TO_ELSE15
     JMP ENDIF15
 SKIP_TO_ELSE15:
+    LDY #3
+    LDX box2_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE16
+    JMP ENDIF16
+SKIP_TO_ELSE16:
+    LDY #0
+    LDX box2_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF16
+ENDIF16:
+    JMP ENDIF15
+ENDIF15:
+    JMP ENDIF14
+ENDIF14:
+    JMP ENDIF13
+ENDIF13:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box3_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE17
+    JMP ENDIF17
+SKIP_TO_ELSE17:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDY #0
+    LDX box3_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE18
+    JMP ENDIF18
+SKIP_TO_ELSE18:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box3_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE19
+    JMP ENDIF19
+SKIP_TO_ELSE19:
+    LDY #3
+    LDX box3_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE20
+    JMP ENDIF20
+SKIP_TO_ELSE20:
+    LDY #0
+    LDX box3_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF20
+ENDIF20:
+    JMP ENDIF19
+ENDIF19:
+    JMP ENDIF18
+ENDIF18:
+    JMP ENDIF17
+ENDIF17:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box4_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE21
+    JMP ENDIF21
+SKIP_TO_ELSE21:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDY #0
+    LDX box4_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE22
+    JMP ENDIF22
+SKIP_TO_ELSE22:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box4_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE23
+    JMP ENDIF23
+SKIP_TO_ELSE23:
+    LDY #3
+    LDX box4_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE24
+    JMP ENDIF24
+SKIP_TO_ELSE24:
+    LDY #0
+    LDX box4_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF24
+ENDIF24:
+    JMP ENDIF23
+ENDIF23:
+    JMP ENDIF22
+ENDIF22:
+    JMP ENDIF21
+ENDIF21:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDY #0
+    LDX box5_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE25
+    JMP ENDIF25
+SKIP_TO_ELSE25:
+    LDY #0
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDY #0
+    LDX box5_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE26
+    JMP ENDIF26
+SKIP_TO_ELSE26:
+    LDA _x
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box5_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE27
+    JMP ENDIF27
+SKIP_TO_ELSE27:
+    LDY #3
+    LDX box5_2
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE28
+    JMP ENDIF28
+SKIP_TO_ELSE28:
+    LDY #0
+    LDX box5_1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #24
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF28
+ENDIF28:
+    JMP ENDIF27
+ENDIF27:
+    JMP ENDIF26
+ENDIF26:
+    JMP ENDIF25
+ENDIF25:
+    JMP ENDIF8
+ENDIF8:
+    LDA #0
+    STA moving
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_RIGHT ; Маскирование для проверки кнопки
+    BEQ NotPressed29 ; Если кнопка не нажата, переходим к метке NotPressed29
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck29 ; Переходим к концу проверки
+NotPressed29:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck29:
+    CMP #$00
+    BNE SKIP_TO_ELSE30
+    JMP ENDIF30
+SKIP_TO_ELSE30:
+    LDA #1
+    STA flipped
+    LDA #1
+    STA moving
     LDA _x
     PHA
     LDA speed
@@ -769,20 +1828,416 @@ SKIP_TO_ELSE15:
     JSR add
     PLA
     STA _x
-    JMP ENDIF15
-ENDIF15:
+    LDA grounded
+    CMP #$00
+    BNE SKIP_TO_ELSE31
+    JMP ENDIF31
+SKIP_TO_ELSE31:
+    LDA eyesState
+    CMP #$00
+    BNE SKIP_TO_ELSE32
+    JMP ELSE32
+SKIP_TO_ELSE32:
+    LDA #89
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #88
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF32
+ELSE32:
+    LDA #91
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #90
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF32:
+    LDA animCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA animCounter
+    LDA animCounter
+    PHA
+    LDA #10
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE33
+    JMP ENDIF33
+SKIP_TO_ELSE33:
+    LDA #0
+    STA animCounter
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA animFrame
+    LDA animFrame
+    PHA
+    LDA #4
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE34
+    JMP ENDIF34
+SKIP_TO_ELSE34:
+    LDA #0
+    STA animFrame
+    LDA #1
+    PHA
+    LDA eyesState
+    PHA
+    JSR subtract
+    PLA
+    STA eyesState
+    JMP ENDIF34
+ENDIF34:
+    LDA animFrame
+    PHA
+    LDA #0
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE35
+    JMP ENDIF35
+SKIP_TO_ELSE35:
+    LDA #105
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #104
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #121
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #120
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF35
+ENDIF35:
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE36
+    JMP ENDIF36
+SKIP_TO_ELSE36:
+    LDA #107
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #106
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF36
+ENDIF36:
+    LDA animFrame
+    PHA
+    LDA #2
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE37
+    JMP ENDIF37
+SKIP_TO_ELSE37:
+    LDA #109
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #108
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #125
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #124
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF37
+ENDIF37:
+    LDA animFrame
+    PHA
+    LDA #3
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE38
+    JMP ENDIF38
+SKIP_TO_ELSE38:
+    LDA #107
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #106
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF38
+ENDIF38:
+    JMP ENDIF33
+ENDIF33:
+    JMP ENDIF31
+ENDIF31:
+    JMP ENDIF30
+ENDIF30:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_LEFT ; Маскирование для проверки кнопки
-    BEQ NotPressed16 ; Если кнопка не нажата, переходим к метке NotPressed16
+    BEQ NotPressed39 ; Если кнопка не нажата, переходим к метке NotPressed39
     LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck16 ; Переходим к концу проверки
-NotPressed16:
+    JMP EndCheck39 ; Переходим к концу проверки
+NotPressed39:
     LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck16:
+EndCheck39:
     CMP #$00
-    BNE SKIP_TO_ELSE17
-    JMP ENDIF17
-SKIP_TO_ELSE17:
+    BNE SKIP_TO_ELSE40
+    JMP ENDIF40
+SKIP_TO_ELSE40:
+    LDA #0
+    STA flipped
+    LDA #1
+    STA moving
     LDA _x
     PHA
     LDA speed
@@ -790,33 +2245,797 @@ SKIP_TO_ELSE17:
     JSR subtract
     PLA
     STA _x
-    JMP ENDIF17
-ENDIF17:
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_A ; Маскирование для проверки кнопки
-    BEQ NotPressed18 ; Если кнопка не нажата, переходим к метке NotPressed18
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck18 ; Переходим к концу проверки
-NotPressed18:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck18:
-    CMP #$00
-    BNE SKIP_TO_ELSE19
-    JMP ENDIF19
-SKIP_TO_ELSE19:
     LDA grounded
     CMP #$00
-    BNE SKIP_TO_ELSE20
-    JMP ENDIF20
-SKIP_TO_ELSE20:
+    BNE SKIP_TO_ELSE41
+    JMP ENDIF41
+SKIP_TO_ELSE41:
+    LDA eyesState
+    CMP #$00
+    BNE SKIP_TO_ELSE42
+    JMP ELSE42
+SKIP_TO_ELSE42:
+    LDA #88
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #89
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF42
+ELSE42:
+    LDA #90
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #91
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF42:
+    LDA animCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA animCounter
+    LDA animCounter
+    PHA
+    LDA #10
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE43
+    JMP ENDIF43
+SKIP_TO_ELSE43:
+    LDA #0
+    STA animCounter
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA animFrame
+    LDA animFrame
+    PHA
+    LDA #4
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE44
+    JMP ENDIF44
+SKIP_TO_ELSE44:
+    LDA #0
+    STA animFrame
+    LDA #1
+    PHA
+    LDA eyesState
+    PHA
+    JSR subtract
+    PLA
+    STA eyesState
+    JMP ENDIF44
+ENDIF44:
+    LDA animFrame
+    PHA
+    LDA #0
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE45
+    JMP ENDIF45
+SKIP_TO_ELSE45:
+    LDA #104
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #105
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #120
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #121
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF45
+ENDIF45:
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE46
+    JMP ENDIF46
+SKIP_TO_ELSE46:
+    LDA #106
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #107
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF46
+ENDIF46:
+    LDA animFrame
+    PHA
+    LDA #2
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE47
+    JMP ENDIF47
+SKIP_TO_ELSE47:
+    LDA #108
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #109
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #124
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #125
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF47
+ENDIF47:
+    LDA animFrame
+    PHA
+    LDA #3
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE48
+    JMP ENDIF48
+SKIP_TO_ELSE48:
+    LDA #106
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #107
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF48
+ENDIF48:
+    JMP ENDIF43
+ENDIF43:
+    JMP ENDIF41
+ENDIF41:
+    JMP ENDIF40
+ENDIF40:
+    LDA grounded
+    CMP #$00
+    BNE SKIP_TO_ELSE49
+    JMP ELSE49
+SKIP_TO_ELSE49:
+    LDA #1
+    PHA
+    LDA moving
+    PHA
+    JSR subtract
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE50
+    JMP ENDIF50
+SKIP_TO_ELSE50:
+    LDA flipped
+    CMP #$00
+    BNE SKIP_TO_ELSE51
+    JMP ELSE51
+SKIP_TO_ELSE51:
+    LDA #89
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #88
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #93
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #92
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #117
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #116
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF51
+ELSE51:
+    LDA #88
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #89
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #92
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #93
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #116
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #117
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF51:
+    JMP ENDIF50
+ENDIF50:
+    JMP ENDIF49
+ELSE49:
+    LDA flipped
+    CMP #$00
+    BNE SKIP_TO_ELSE52
+    JMP ELSE52
+SKIP_TO_ELSE52:
+    LDA #87
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #86
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #103
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #102
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #119
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #118
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF52
+ELSE52:
+    LDA #86
+    LDY #1
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #87
+    LDY #1
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #102
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #103
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #0
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #118
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #119
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #1
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF52:
+ENDIF49:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_A ; Маскирование для проверки кнопки
+    BEQ NotPressed53 ; Если кнопка не нажата, переходим к метке NotPressed53
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck53 ; Переходим к концу проверки
+NotPressed53:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck53:
+    CMP #$00
+    BNE SKIP_TO_ELSE54
+    JMP ENDIF54
+SKIP_TO_ELSE54:
+    LDA grounded
+    CMP #$00
+    BNE SKIP_TO_ELSE55
+    JMP ENDIF55
+SKIP_TO_ELSE55:
     LDA jumpSpeed
     STA vSpeed
     LDA #0
     STA counter
-    JMP ENDIF20
-ENDIF20:
-    JMP ENDIF19
-ENDIF19:
+    JMP ENDIF55
+ENDIF55:
+    JMP ENDIF54
+ENDIF54:
     LDA _x
     LDY #3
     LDX hero1
@@ -1160,7 +3379,7 @@ GetButtonStates:
 
 PaletteData:
     .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
-    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;sprite palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$33,$23,$13  ;sprite palette data
 
 .segment "VECTORS"
     .word NMI

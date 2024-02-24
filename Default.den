@@ -7,8 +7,8 @@ byte jumpSpeed = 125;
 byte test = 0;
 
 byte grounded = 0;
+byte flipped = 0;
 
-Sprite cursorSprite;
 Sprite hero1;
 Sprite hero2;
 Sprite hero3;
@@ -16,16 +16,48 @@ Sprite hero4;
 Sprite hero5;
 Sprite hero6;
 
-Sprite box1;
-Sprite box2;
-Sprite box3;
-Sprite box4;
+Sprite box1_1;
+Sprite box1_2;
+Sprite box1_3;
+Sprite box1_4;
+
+Sprite box2_1;
+Sprite box2_2;
+Sprite box2_3;
+Sprite box2_4;
+
+Sprite box3_1;
+Sprite box3_2;
+Sprite box3_3;
+Sprite box3_4;
+
+Sprite box4_1;
+Sprite box4_2;
+Sprite box4_3;
+Sprite box4_4;
+
+Sprite box5_1;
+Sprite box5_2;
+Sprite box5_3;
+Sprite box5_4;
+
+Sprite sbox1;
+Sprite sbox2;
+Sprite sbox3;
 
 byte counter = 0;
+byte animCounter = 0;
+byte animFrame = 0;
+byte eyesState = 0;
+
+byte moving = 0;
+
+byte platformMovingCounter = 0;
+byte platformUp = 0;
+
+byte init = 0;
 
 void Start(){
-  box1 = CreateSprite(_x +100, _y + 165, 10, 3);
-  box2 = CreateSprite(_x +100+8, _y + 165, 11, 3);
 
   //cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
   hero1 = CreateSprite(_x,_y, 88, 0);
@@ -35,18 +67,63 @@ void Start(){
   hero5 = CreateSprite(_x,_y+8+8, 120, 1);
   hero6 = CreateSprite(_x+8,_y+8+8, 121, 1);
 
+  box1_1 = CreateSprite(_x +100, _y + 165, 52, 3);
+  box1_2 = CreateSprite(_x +100+8, _y + 165, 53, 3);
+  box1_3 = CreateSprite(_x +100, _y + 165+8, 68, 3);
+  box1_4 = CreateSprite(_x +100+8, _y + 165+8, 69, 3);
 
-  box3 = CreateSprite(_x +140, 165, 26, 3);
-  box4 = CreateSprite(_x +140+8, 165, 27, 3);
+  box2_1 = CreateSprite(_x +140, 165, 52, 3);
+  box2_2 = CreateSprite(_x +140+8, 165, 53, 3);
+  box2_3 = CreateSprite(_x +140, 165+8, 68, 3);
+  box2_4 = CreateSprite(_x +140+8, 165+8, 69, 3);
   
+  box3_1 = CreateSprite(_x + 50, _y + 100, 52, 2);
+  box3_2 = CreateSprite(_x + 50 + 8, _y + 100, 53, 2);
+  box3_3 = CreateSprite(_x + 50, _y + 100 + 8, 68, 2);
+  box3_4 = CreateSprite(_x + 50 + 8, _y + 100 + 8, 69, 2);
+
+  box4_1 = CreateSprite(_x + 180, 120, 52, 3);
+  box4_2 = CreateSprite(_x + 180 + 8, 120, 53, 3);
+  box4_3 = CreateSprite(_x + 180, 120 + 8, 68, 3);
+  box4_4 = CreateSprite(_x + 180 + 8, 120 + 8, 69, 3);
+
+  box5_1 = CreateSprite(_x + 70, _y + 130, 52, 2);
+  box5_2 = CreateSprite(_x + 70 + 8, _y + 130, 53, 2);
+  box5_3 = CreateSprite(_x + 70, _y + 130 + 8, 68, 2);
+  box5_4 = CreateSprite(_x + 70 + 8, _y + 130 + 8, 69, 2);
+
+  sbox1 = CreateSprite(20,150,50,2);
+  sbox2 = CreateSprite(28,150,50,3);
+  //
 }
 
 void Update(){
-
+  if(init == 0){
+    init = 1;
+    sbox3 = CreateSprite(36,150,50,2);
+  }
 
   counter = counter + 1;
 
+  platformMovingCounter = platformMovingCounter +1;
 
+  if(platformMovingCounter == 30){
+    platformMovingCounter = 0;
+    platformUp = 1 - platformUp;
+  }
+
+  if(platformUp){
+    box1_1.Y = box1_1.Y - 1;
+    box1_2.Y = box1_2.Y - 1;
+    box1_3.Y = box1_3.Y - 1;
+    box1_4.Y = box1_4.Y - 1;
+    
+  } else {
+    box1_1.Y = box1_1.Y + 1;
+    box1_2.Y = box1_2.Y + 1;
+    box1_3.Y = box1_3.Y + 1;
+    box1_4.Y = box1_4.Y + 1;
+  }
 
   if(counter == 7){
     counter = 0;
@@ -75,11 +152,11 @@ void Update(){
   }
 
   if(vSpeed > 128){ //если падаем
-    if(hero5.Y < box1.Y){ // если игрок выше нижней границы бокса
-      if(hero5.Y +8 > box1.Y){ //если игрок ниже верхней границы бокса
-        if(_x + 8 > box1.X){ //если середина игрока больше левой границы бокса
-          if(box2.X > _x){ //если середина игрока меньше правой границы бокса
-            _y = box1.Y - 24; //устанавливаем позицию игрока чтобы он стоял на платформе
+    if(hero5.Y < box1_1.Y){ // если игрок выше нижней границы бокса
+      if(hero5.Y +8 -1 > box1_1.Y){ //если игрок ниже верхней границы бокса
+        if(_x + 8 > box1_1.X){ //если середина игрока больше левой границы бокса
+          if(box1_2.X > _x){ //если середина игрока меньше правой границы бокса
+            _y = box1_1.Y - 24 +1; //устанавливаем позицию игрока чтобы он стоял на платформе
             vSpeed = 128; //обнуляем вертикальную скорость
             grounded = 1; //состояние приземлен
           }
@@ -87,33 +164,212 @@ void Update(){
       }
     }
 
-    if(hero5.Y < box3.Y){ // если игрок выше нижней границы бокса
-      if(hero5.Y +8 > box3.Y){ //если игрок ниже верхней границы бокса
-        if(_x + 8 > box3.X){ //если середина игрока больше левой границы бокса
-          if(box4.X > _x){ //если середина игрока меньше правой границы бокса
-            _y = box3.Y - 24; //устанавливаем позицию игрока чтобы он стоял на платформе
+    if(hero5.Y < box2_1.Y){ // если игрок выше нижней границы бокса
+      if(hero5.Y +8 -1 > box2_1.Y){ //если игрок ниже верхней границы бокса
+        if(_x + 8 > box2_1.X){ //если середина игрока больше левой границы бокса
+          if(box2_2.X > _x){ //если середина игрока меньше правой границы бокса
+            _y = box2_1.Y - 24 +1; //устанавливаем позицию игрока чтобы он стоял на платформе
             vSpeed = 128; //обнуляем вертикальную скорость
             grounded = 1; //состояние приземлен
           }
         }
       }
     }
+
+
+
+  if(hero5.Y < box3_1.Y){
+    if(hero5.Y +8 -1 > box3_1.Y){
+      if(_x + 8 > box3_1.X){
+        if(box3_2.X > _x){
+          _y = box3_1.Y - 24 +1;
+          vSpeed = 128;
+          grounded = 1;
+        }
+      }
+    }
+  }
+
+  if(hero5.Y < box4_1.Y){
+    if(hero5.Y +8 -1 > box4_1.Y){
+      if(_x + 8 > box4_1.X){
+        if(box4_2.X > _x){
+          _y = box4_1.Y - 24 +1;
+          vSpeed = 128;
+          grounded = 1;
+        }
+      }
+    }
+  }
+
+  if(hero5.Y < box5_1.Y){
+    if(hero5.Y +8 -1 > box5_1.Y){
+      if(_x + 8 > box5_1.X){
+        if(box5_2.X > _x){
+          _y = box5_1.Y - 24 +1;
+          vSpeed = 128;
+          grounded = 1;
+        }
+      }
+    }
+  }
+
+
 
   }
+
+
+
+  moving = 0;
 
   if(Input.GetKey(KeyCode.Player1.Right)){
-    
-      _x = _x + speed;
-    
-    
+    flipped = 1;
+    moving = 1;
+    _x = _x + speed;
+
+
+    if(grounded){
+
+      if(eyesState){
+        hero1.Tile = 89; hero1.Attribute = 64; // Отражаем горизонтально
+        hero2.Tile = 88; hero2.Attribute = 64;
+      } else {
+        hero1.Tile = 91; hero1.Attribute = 64;
+        hero2.Tile = 90; hero2.Attribute = 64;
+      }
+
+
+      animCounter = animCounter + 1;
+
+      if(animCounter == 10){
+        animCounter = 0;
+        animFrame = animFrame + 1;
+
+        if(animFrame == 4){
+          animFrame = 0;
+          eyesState = 1 - eyesState;
+        }
+
+        if(animFrame == 0){
+          hero3.Tile = 105; hero3.Attribute = 64;
+          hero4.Tile = 104; hero4.Attribute = 64;
+          hero5.Tile = 121; hero5.Attribute = 65; // Учитывая начальный атрибут 1
+          hero6.Tile = 120; hero6.Attribute = 65;
+        }
+        if(animFrame == 1){
+          hero3.Tile = 107; hero3.Attribute = 64;
+          hero4.Tile = 106; hero4.Attribute = 64;
+          hero5.Tile = 123; hero5.Attribute = 65;
+          hero6.Tile = 122; hero6.Attribute = 65;
+        }
+        if(animFrame == 2){
+          hero3.Tile = 109; hero3.Attribute = 64;
+          hero4.Tile = 108; hero4.Attribute = 64;
+          hero5.Tile = 125; hero5.Attribute = 65;
+          hero6.Tile = 124; hero6.Attribute = 65;
+        }
+        if(animFrame == 3){
+          hero3.Tile = 107; hero3.Attribute = 64; // Повторение для анимации
+          hero4.Tile = 106; hero4.Attribute = 64;
+          hero5.Tile = 123; hero5.Attribute = 65;
+          hero6.Tile = 122; hero6.Attribute = 65;
+        }
+      }
+    }
   }
 
+
   if(Input.GetKey(KeyCode.Player1.Left)){
-    
-      _x = _x - speed;
-    
-    
+    flipped = 0;
+    moving = 1;
+    _x = _x - speed;
+    if(grounded){
+      if(eyesState){
+        hero1.Tile = 88; hero1.Attribute = 0; // Возвращаем атрибуты к исходным значениям
+        hero2.Tile = 89; hero2.Attribute = 0;
+      } else {
+        hero1.Tile = 90; hero1.Attribute = 0;
+        hero2.Tile = 91; hero2.Attribute = 0;
+      }
+
+      animCounter = animCounter + 1;
+      if(animCounter == 10){
+        animCounter = 0;
+        animFrame = animFrame + 1;
+        if(animFrame == 4){
+          animFrame = 0;
+          eyesState = 1 - eyesState;
+
+          
+        }
+
+        if(animFrame == 0){
+          hero3.Tile = 104; hero3.Attribute = 0;
+          hero4.Tile = 105; hero4.Attribute = 0;
+          hero5.Tile = 120; hero5.Attribute = 1; // Сохраняем исходное значение атрибута, если оно было 1
+          hero6.Tile = 121; hero6.Attribute = 1;
+        }
+        if(animFrame == 1){
+          hero3.Tile = 106; hero3.Attribute = 0;
+          hero4.Tile = 107; hero4.Attribute = 0;
+          hero5.Tile = 122; hero5.Attribute = 1;
+          hero6.Tile = 123; hero6.Attribute = 1;
+        }
+        if(animFrame == 2){
+          hero3.Tile = 108; hero3.Attribute = 0;
+          hero4.Tile = 109; hero4.Attribute = 0;
+          hero5.Tile = 124; hero5.Attribute = 1;
+          hero6.Tile = 125; hero6.Attribute = 1;
+        }
+        if(animFrame == 3){
+          hero3.Tile = 106; hero3.Attribute = 0; // Повторение для цикличности анимации
+          hero4.Tile = 107; hero4.Attribute = 0;
+          hero5.Tile = 122; hero5.Attribute = 1;
+          hero6.Tile = 123; hero6.Attribute = 1;
+        }
+      }
+    }
   }
+
+  
+  if(grounded){
+    if(1 - moving){
+      if(flipped){
+        hero1.Tile = 89; hero1.Attribute = 64;
+        hero2.Tile = 88; hero2.Attribute = 64;
+        hero3.Tile = 93; hero3.Attribute = 64;
+        hero4.Tile = 92; hero4.Attribute = 64;
+        hero5.Tile = 117; hero5.Attribute = 65; // Учитывая начальный атрибут 1
+        hero6.Tile = 116; hero6.Attribute = 65;
+      } else {
+        // Код для стоячего персонажа, ориентированного влево, без флипа
+        hero1.Tile = 88; hero1.Attribute = 0; // Обратный порядок для hero1 и hero2 по сравнению с флипнутым
+        hero2.Tile = 89; hero2.Attribute = 0;
+        hero3.Tile = 92; hero3.Attribute = 0; // Аналогичное изменение для hero3 и hero4
+        hero4.Tile = 93; hero4.Attribute = 0;
+        hero5.Tile = 116; hero5.Attribute = 1; // С учетом начального атрибута в 1
+        hero6.Tile = 117; hero6.Attribute = 1;
+      }
+    }
+  } else {
+    if(flipped){
+      hero1.Tile = 87; hero1.Attribute = 64;
+      hero2.Tile = 86; hero2.Attribute = 64;
+      hero3.Tile = 103; hero3.Attribute = 64;
+      hero4.Tile = 102; hero4.Attribute = 64;
+      hero5.Tile = 119; hero5.Attribute = 65; // Учитывая начальный атрибут 1
+      hero6.Tile = 118; hero6.Attribute = 65;
+    } else {
+      hero1.Tile = 86; hero1.Attribute = 0; // Обратный порядок для hero1 и hero2 по сравнению с флипнутым
+      hero2.Tile = 87; hero2.Attribute = 0;
+      hero3.Tile = 102; hero3.Attribute = 0; // Аналогичное изменение для hero3 и hero4
+      hero4.Tile = 103; hero4.Attribute = 0;
+      hero5.Tile = 118; hero5.Attribute = 1; // С учетом начального атрибута в 1
+      hero6.Tile = 119; hero6.Attribute = 1;
+    }
+  }
+  
+
 
   if(Input.GetKey(KeyCode.Player1.A)){
     if(grounded){
@@ -136,7 +392,7 @@ void Update(){
   hero6.X = _x+8;
   hero6.Y = _y+16;
 
-
+  
 
 
   //box1.X = box1.X + 1;
