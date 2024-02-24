@@ -382,7 +382,7 @@ GetButtonStates:
 
 PaletteData:
     .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
-    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$33,$23,$13  ;sprite palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$07,$0d,$19  ;sprite palette data
 
 .segment "VECTORS"
     .word NMI

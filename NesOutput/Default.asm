@@ -35,6 +35,10 @@ pad2: .res 1
 _x: .res 1
 ; Byte declaration: _y = 20
 _y: .res 1
+; Byte declaration: ex = 50
+ex: .res 1
+; Byte declaration: ey = 20
+ey: .res 1
 ; Byte declaration: speed = 1
 speed: .res 1
 ; Byte declaration: vSpeed = 128
@@ -107,6 +111,18 @@ sbox1: .res 1
 sbox2: .res 1
 ; Sprite declaration: sbox3
 sbox3: .res 1
+; Sprite declaration: enemy1
+enemy1: .res 1
+; Sprite declaration: enemy2
+enemy2: .res 1
+; Sprite declaration: enemy3
+enemy3: .res 1
+; Sprite declaration: enemy4
+enemy4: .res 1
+; Sprite declaration: enemy5
+enemy5: .res 1
+; Sprite declaration: enemy6
+enemy6: .res 1
 ; Byte declaration: counter = 0
 counter: .res 1
 ; Byte declaration: animCounter = 0
@@ -247,6 +263,12 @@ STA _x
 ; initialization of _y with 20
 LDA #20
 STA _y
+; initialization of ex with 50
+LDA #50
+STA ex
+; initialization of ey with 20
+LDA #20
+STA ey
 ; initialization of speed with 1
 LDA #1
 STA speed
@@ -419,7 +441,7 @@ STA init
     PHA
     LDA #52
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -445,7 +467,7 @@ STA init
     PHA
     LDA #53
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -471,7 +493,7 @@ STA init
     PHA
     LDA #68
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -502,7 +524,7 @@ STA init
     PHA
     LDA #69
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -518,7 +540,7 @@ STA init
     PHA
     LDA #52
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -539,7 +561,7 @@ STA init
     PHA
     LDA #53
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -560,7 +582,7 @@ STA init
     PHA
     LDA #68
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -586,7 +608,7 @@ STA init
     PHA
     LDA #69
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -900,7 +922,7 @@ STA init
     PHA
     LDA #50
     PHA
-    LDA #3
+    LDA #2
     PHA
     JSR CreateSprite
     PLA
@@ -937,6 +959,117 @@ SKIP_TO_ELSE0:
     JSR CreateSprite
     PLA
     STA sbox3
+    LDA ex
+    PHA
+    LDA ey
+    PHA
+    LDA #88
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy1
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA ey
+    PHA
+    LDA #89
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy2
+    LDA ex
+    PHA
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #104
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy3
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #105
+    PHA
+    LDA #3
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy4
+    LDA ex
+    PHA
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #120
+    PHA
+    LDA #1
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy5
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #121
+    PHA
+    LDA #1
+    PHA
+    JSR CreateSprite
+    PLA
+    STA enemy6
     JMP ENDIF0
 ENDIF0:
     LDA counter
@@ -3155,6 +3288,125 @@ ENDIF54:
     LDX #$02
     STX temp2
     STA (temp), Y
+    LDA ex
+    LDY #3
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    LDY #0
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    LDY #0
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ex
+    LDY #3
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ex
+    LDY #3
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ex
+    PHA
+    LDA #8
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA ey
+    PHA
+    LDA #16
+    PHA
+    JSR add
+    PLA
+    LDY #0
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
 
 
 
@@ -3379,7 +3631,7 @@ GetButtonStates:
 
 PaletteData:
     .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
-    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$33,$23,$13  ;sprite palette data
+    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$07,$0d,$19  ;sprite palette data
 
 .segment "VECTORS"
     .word NMI
