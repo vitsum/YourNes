@@ -23,30 +23,6 @@ Sprite box1_2;
 Sprite box1_3;
 Sprite box1_4;
 
-Sprite box2_1;
-Sprite box2_2;
-Sprite box2_3;
-Sprite box2_4;
-
-Sprite box3_1;
-Sprite box3_2;
-Sprite box3_3;
-Sprite box3_4;
-
-Sprite box4_1;
-Sprite box4_2;
-Sprite box4_3;
-Sprite box4_4;
-
-Sprite box5_1;
-Sprite box5_2;
-Sprite box5_3;
-Sprite box5_4;
-
-Sprite sbox1;
-Sprite sbox2;
-Sprite sbox3;
-
 Sprite enemy1;
 Sprite enemy2;
 Sprite enemy3;
@@ -81,40 +57,16 @@ void Start(){
   box1_3 = CreateSprite(_x +100, _y + 165+8, 68,    2);
   box1_4 = CreateSprite(_x +100+8, _y + 165+8, 69,  2);
 
-  box2_1 = CreateSprite(_x +140, 165, 52,           2);
-  box2_2 = CreateSprite(_x +140+8, 165, 53,         2);
-  box2_3 = CreateSprite(_x +140, 165+8, 68,         2);
-  box2_4 = CreateSprite(_x +140+8, 165+8, 69,       2);
-  
-  box3_1 = CreateSprite(_x + 50, _y + 100, 52, 2);
-  box3_2 = CreateSprite(_x + 50 + 8, _y + 100, 53, 2);
-  box3_3 = CreateSprite(_x + 50, _y + 100 + 8, 68, 2);
-  box3_4 = CreateSprite(_x + 50 + 8, _y + 100 + 8, 69, 2);
-
-  box4_1 = CreateSprite(_x + 180, 120, 52, 3);
-  box4_2 = CreateSprite(_x + 180 + 8, 120, 53, 3);
-  box4_3 = CreateSprite(_x + 180, 120 + 8, 68, 3);
-  box4_4 = CreateSprite(_x + 180 + 8, 120 + 8, 69, 3);
-
-  box5_1 = CreateSprite(_x + 70, _y + 130, 52, 2);
-  box5_2 = CreateSprite(_x + 70 + 8, _y + 130, 53, 2);
-  box5_3 = CreateSprite(_x + 70, _y + 130 + 8, 68, 2);
-  box5_4 = CreateSprite(_x + 70 + 8, _y + 130 + 8, 69, 2);
-
-  sbox1 = CreateSprite(20,150,50,2);
-  sbox2 = CreateSprite(28,150,50,2);
-  //
 }
 
 void Update(){
   if(init == 0){
     init = 1;
-    sbox3 = CreateSprite(36,150,50,2);
 
-    enemy1 = CreateSprite(ex,ey, 88, 3);
-    enemy2 = CreateSprite(ex+8,ey, 89, 3);
-    enemy3 = CreateSprite(ex,ey+8, 104, 3);
-    enemy4 = CreateSprite(ex+8,ey+8, 105, 3);
+    enemy1 = CreateSprite(ex,ey, 88,      2);
+    enemy2 = CreateSprite(ex+8,ey, 89,    2);
+    enemy3 = CreateSprite(ex,ey+8, 104,   2);
+    enemy4 = CreateSprite(ex+8,ey+8, 105, 2);
     enemy5 = CreateSprite(ex,ey+8+8, 120, 1);
     enemy6 = CreateSprite(ex+8,ey+8+8, 121, 1);
   }
@@ -180,58 +132,7 @@ void Update(){
       }
     }
 
-    if(hero5.Y < box2_1.Y){ // если игрок выше нижней границы бокса
-      if(hero5.Y +8 -1 > box2_1.Y){ //если игрок ниже верхней границы бокса
-        if(_x + 8 > box2_1.X){ //если середина игрока больше левой границы бокса
-          if(box2_2.X > _x){ //если середина игрока меньше правой границы бокса
-            _y = box2_1.Y - 24 +1; //устанавливаем позицию игрока чтобы он стоял на платформе
-            vSpeed = 128; //обнуляем вертикальную скорость
-            grounded = 1; //состояние приземлен
-          }
-        }
-      }
-    }
-
-
-
-  if(hero5.Y < box3_1.Y){
-    if(hero5.Y +8 -1 > box3_1.Y){
-      if(_x + 8 > box3_1.X){
-        if(box3_2.X > _x){
-          _y = box3_1.Y - 24 +1;
-          vSpeed = 128;
-          grounded = 1;
-        }
-      }
-    }
-  }
-
-  if(hero5.Y < box4_1.Y){
-    if(hero5.Y +8 -1 > box4_1.Y){
-      if(_x + 8 > box4_1.X){
-        if(box4_2.X > _x){
-          _y = box4_1.Y - 24 +1;
-          vSpeed = 128;
-          grounded = 1;
-        }
-      }
-    }
-  }
-
-  if(hero5.Y < box5_1.Y){
-    if(hero5.Y +8 -1 > box5_1.Y){
-      if(_x + 8 > box5_1.X){
-        if(box5_2.X > _x){
-          _y = box5_1.Y - 24 +1;
-          vSpeed = 128;
-          grounded = 1;
-        }
-      }
-    }
-  }
-
-
-
+    
   }
 
 

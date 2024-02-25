@@ -8,6 +8,7 @@ BTN_B       = %01000000
 BTN_A       = %10000000
 CONTROLLER1 = $4016
 CONTROLLER2 = $4017
+PPUDATA = $2007
 
 .segment "HEADER"
 .byte "NES"
@@ -117,6 +118,18 @@ ClearNametable:
     INY
     CPY #$08
     BNE ClearNametable
+
+; test load namatable
+    lda #$20       ; High byte of $2000
+    sta $2006
+    lda #$00       ; Low byte of $2000
+    sta $2006
+
+
+    ldx #<nametablescreentest_rleca65
+    ldy #>nametablescreentest_rleca65
+    jsr decodeRLE
+
     
 ; Enable interrupts
     CLI
@@ -149,6 +162,9 @@ InitSpritesStack:
 
 
 Start:
+
+
+
 {1}
 
 Loop:
@@ -158,6 +174,10 @@ NMI:
     LDA #$02 ; copy sprite data from $0200 => PPU memory for display
     STA $4014
     JSR ReadControllers
+
+
+
+
 {2}
 
 
@@ -380,9 +400,48 @@ GetButtonStates:
 
     rts
 
+.proc decodeRLE
+    stx temp
+    sty temp2
+    ldy #0
+    jsr doRLEbyte
+    sta temp3
+L1:
+    jsr doRLEbyte
+    cmp temp3
+    beq L2
+    sta PPUDATA
+    sta temp4
+    bne L1
+L2:
+    jsr doRLEbyte
+    cmp #0
+    beq L4
+    tax
+    lda temp4
+L3:
+    sta PPUDATA
+    dex
+    bne L3
+    beq L1
+L4:
+    rts
+.endproc
+
+.proc doRLEbyte
+    lda (temp),y
+    inc temp
+    bne L1
+    inc temp2
+L1:
+    rts
+.endproc
+
 PaletteData:
-    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
-    .byte $3c,$27,$07,$20,$3c,$0c,$1c,$07,$3c,$29,$19,$0a,$3c,$07,$0d,$19  ;sprite palette data
+    .byte $3c,$20,$26,$0d,$3c,$0c,$1c,$07,$3c,$0d,$20,$0f,$3c,$07,$37,$27  ;background palette data
+    .byte $3c,$36,$07,$20,$3c,$1c,$2c,$07,$3c,$17,$0d,$2c,$3c,$2a,$1a,$0a  ;sprite palette data
+
+.include "../nestemplates/mygraphics/nametablescreentest_rleca65.s"
 
 .segment "VECTORS"
     .word NMI
