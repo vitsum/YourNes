@@ -85,6 +85,9 @@ namespace NesCompiler
                 case "IfStatement":
                     GenerateIfStatement(node);
                     break;
+                case "WhileStatement":
+                    GenerateWhileStatement(node);
+                    break;
                 default:
                     throw new Exception("Unrecognized node type: " + node.Type);
             }
@@ -529,8 +532,34 @@ namespace NesCompiler
             _currentSb.AppendLine($"{endIfLabel}:");
         }
 
+        private void GenerateWhileStatement(AstNode node)
+        {
+            var condition = node.Children[0];
+            var body = node.Children[1];
 
+            // Create labels for branching
+            string startLabel = $"WHILE_START_{_labelCounter}";
+            string endLabel = $"WHILE_END_{_labelCounter++}";
 
+            // Generate label for the start of the loop
+            _currentSb.AppendLine($"{startLabel}:");
+
+            // Generate code for the condition
+            GenerateExpression(condition);
+
+            // If the condition is false, jump to the end of the loop
+            _currentSb.AppendLine("    CMP #$00");
+            _currentSb.AppendLine($"    BEQ {endLabel}");
+
+            // Generate code for the loop body
+            GenerateNode(body);
+
+            // Jump back to the start of the loop
+            _currentSb.AppendLine($"    JMP {startLabel}");
+
+            // Generate label for the end of the loop
+            _currentSb.AppendLine($"{endLabel}:");
+        }
 
         private int GetSizeForType(string type)
         {

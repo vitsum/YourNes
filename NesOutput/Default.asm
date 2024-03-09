@@ -44,16 +44,30 @@ ey: .res 1
 speed: .res 1
 ; Byte declaration: vSpeed = 128
 vSpeed: .res 1
+; Byte declaration: eVSpeed = 128
+eVSpeed: .res 1
 ; Byte declaration: g = 1
 g: .res 1
 ; Byte declaration: jumpSpeed = 125
 jumpSpeed: .res 1
-; Byte declaration: test = 0
-test: .res 1
 ; Byte declaration: grounded = 0
 grounded: .res 1
+; Byte declaration: eGrounded = 0
+eGrounded: .res 1
 ; Byte declaration: flipped = 0
 flipped: .res 1
+; Byte declaration: eFlipped = 0
+eFlipped: .res 1
+; Byte declaration: playerHeight = 24
+playerHeight: .res 1
+; Byte declaration: playerWidth = 16
+playerWidth: .res 1
+; Byte declaration: boxHeight = 4
+boxHeight: .res 1
+; Byte declaration: boxWidth = 64
+boxWidth: .res 1
+; Byte declaration: groundLevel = 198
+groundLevel: .res 1
 ; Sprite declaration: hero1
 hero1: .res 1
 ; Sprite declaration: hero2
@@ -66,14 +80,6 @@ hero4: .res 1
 hero5: .res 1
 ; Sprite declaration: hero6
 hero6: .res 1
-; Sprite declaration: box1_1
-box1_1: .res 1
-; Sprite declaration: box1_2
-box1_2: .res 1
-; Sprite declaration: box1_3
-box1_3: .res 1
-; Sprite declaration: box1_4
-box1_4: .res 1
 ; Sprite declaration: enemy1
 enemy1: .res 1
 ; Sprite declaration: enemy2
@@ -86,6 +92,14 @@ enemy4: .res 1
 enemy5: .res 1
 ; Sprite declaration: enemy6
 enemy6: .res 1
+; Sprite declaration: box1
+box1: .res 1
+; Sprite declaration: box2
+box2: .res 1
+; Sprite declaration: box3
+box3: .res 1
+; Sprite declaration: box4
+box4: .res 1
 ; Byte declaration: counter = 0
 counter: .res 1
 ; Byte declaration: animCounter = 0
@@ -94,14 +108,28 @@ animCounter: .res 1
 animFrame: .res 1
 ; Byte declaration: eyesState = 0
 eyesState: .res 1
+; Byte declaration: eCounter = 0
+eCounter: .res 1
+; Byte declaration: eAnimCounter = 0
+eAnimCounter: .res 1
+; Byte declaration: eAnimFrame = 0
+eAnimFrame: .res 1
+; Byte declaration: eEyesState = 0
+eEyesState: .res 1
 ; Byte declaration: moving = 0
 moving: .res 1
-; Byte declaration: platformMovingCounter = 0
-platformMovingCounter: .res 1
-; Byte declaration: platformUp = 0
-platformUp: .res 1
-; Byte declaration: init = 0
-init: .res 1
+; Byte declaration: eMoving = 0
+eMoving: .res 1
+; Byte declaration: eDirectionCounter = 0
+eDirectionCounter: .res 1
+; Byte declaration: eJumpCounter = 0
+eJumpCounter: .res 1
+; Byte declaration: eRandomSeed = 1
+eRandomSeed: .res 1
+; Byte declaration: eDirectionInterval = 0
+eDirectionInterval: .res 1
+; Byte declaration: i = 0
+i: .res 1
 
 .segment "STARTUP"
 Reset:
@@ -253,21 +281,42 @@ STA speed
 ; initialization of vSpeed with 128
 LDA #128
 STA vSpeed
+; initialization of eVSpeed with 128
+LDA #128
+STA eVSpeed
 ; initialization of g with 1
 LDA #1
 STA g
 ; initialization of jumpSpeed with 125
 LDA #125
 STA jumpSpeed
-; initialization of test with 0
-LDA #0
-STA test
 ; initialization of grounded with 0
 LDA #0
 STA grounded
+; initialization of eGrounded with 0
+LDA #0
+STA eGrounded
 ; initialization of flipped with 0
 LDA #0
 STA flipped
+; initialization of eFlipped with 0
+LDA #0
+STA eFlipped
+; initialization of playerHeight with 24
+LDA #24
+STA playerHeight
+; initialization of playerWidth with 16
+LDA #16
+STA playerWidth
+; initialization of boxHeight with 4
+LDA #4
+STA boxHeight
+; initialization of boxWidth with 64
+LDA #64
+STA boxWidth
+; initialization of groundLevel with 198
+LDA #198
+STA groundLevel
 ; initialization of counter with 0
 LDA #0
 STA counter
@@ -280,18 +329,39 @@ STA animFrame
 ; initialization of eyesState with 0
 LDA #0
 STA eyesState
+; initialization of eCounter with 0
+LDA #0
+STA eCounter
+; initialization of eAnimCounter with 0
+LDA #0
+STA eAnimCounter
+; initialization of eAnimFrame with 0
+LDA #0
+STA eAnimFrame
+; initialization of eEyesState with 0
+LDA #0
+STA eEyesState
 ; initialization of moving with 0
 LDA #0
 STA moving
-; initialization of platformMovingCounter with 0
+; initialization of eMoving with 0
 LDA #0
-STA platformMovingCounter
-; initialization of platformUp with 0
+STA eMoving
+; initialization of eDirectionCounter with 0
 LDA #0
-STA platformUp
-; initialization of init with 0
+STA eDirectionCounter
+; initialization of eJumpCounter with 0
 LDA #0
-STA init
+STA eJumpCounter
+; initialization of eRandomSeed with 1
+LDA #1
+STA eRandomSeed
+; initialization of eDirectionInterval with 0
+LDA #0
+STA eDirectionInterval
+; initialization of i with 0
+LDA #0
+STA i
     LDA _x
     PHA
     LDA _y
@@ -403,135 +473,6 @@ STA init
     JSR CreateSprite
     PLA
     STA hero6
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #52
-    PHA
-    LDA #2
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box1_1
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #53
-    PHA
-    LDA #2
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box1_2
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #68
-    PHA
-    LDA #2
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box1_3
-    LDA _x
-    PHA
-    LDA #100
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA _y
-    PHA
-    LDA #165
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #8
-    PHA
-    JSR add
-    PLA
-    PHA
-    LDA #69
-    PHA
-    LDA #2
-    PHA
-    JSR CreateSprite
-    PLA
-    STA box1_4
-
-
-Loop:
-    JMP Loop
-
-NMI:
-    LDA #$02 ; copy sprite data from $0200 => PPU memory for display
-    STA $4014
-    JSR ReadControllers
-
-
-
-
-    LDA init
-    PHA
-    LDA #0
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE0
-    JMP ENDIF0
-SKIP_TO_ELSE0:
-    LDA #1
-    STA init
     LDA ex
     PHA
     LDA ey
@@ -612,7 +553,7 @@ SKIP_TO_ELSE0:
     PHA
     LDA #120
     PHA
-    LDA #1
+    LDA #3
     PHA
     JSR CreateSprite
     PLA
@@ -638,13 +579,88 @@ SKIP_TO_ELSE0:
     PHA
     LDA #121
     PHA
-    LDA #1
+    LDA #3
     PHA
     JSR CreateSprite
     PLA
     STA enemy6
-    JMP ENDIF0
-ENDIF0:
+    LDA #100
+    PHA
+    LDA #172
+    PHA
+    LDA #20
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #52
+    PHA
+    LDA #4
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box1
+    LDA #108
+    PHA
+    LDA #172
+    PHA
+    LDA #20
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #53
+    PHA
+    LDA #4
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box2
+    LDA #100
+    PHA
+    LDA #180
+    PHA
+    LDA #20
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #52
+    PHA
+    LDA #4
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box3
+    LDA #108
+    PHA
+    LDA #180
+    PHA
+    LDA #20
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #53
+    PHA
+    LDA #4
+    PHA
+    JSR CreateSprite
+    PLA
+    STA box4
+
+
+Loop:
+    JMP Loop
+
+NMI:
+    LDA #$02 ; copy sprite data from $0200 => PPU memory for display
+    STA $4014
+    JSR ReadControllers
+
+
+
+
     LDA counter
     PHA
     LDA #1
@@ -652,178 +668,13 @@ ENDIF0:
     JSR add
     PLA
     STA counter
-    LDA platformMovingCounter
+    LDA eCounter
     PHA
     LDA #1
     PHA
     JSR add
     PLA
-    STA platformMovingCounter
-    LDA platformMovingCounter
-    PHA
-    LDA #30
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE1
-    JMP ENDIF1
-SKIP_TO_ELSE1:
-    LDA #0
-    STA platformMovingCounter
-    LDA #1
-    PHA
-    LDA platformUp
-    PHA
-    JSR subtract
-    PLA
-    STA platformUp
-    JMP ENDIF1
-ENDIF1:
-    LDA platformUp
-    CMP #$00
-    BNE SKIP_TO_ELSE2
-    JMP ELSE2
-SKIP_TO_ELSE2:
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR subtract
-    PLA
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_2
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR subtract
-    PLA
-    LDY #0
-    LDX box1_2
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_3
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR subtract
-    PLA
-    LDY #0
-    LDX box1_3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_4
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR subtract
-    PLA
-    LDY #0
-    LDX box1_4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    JMP ENDIF2
-ELSE2:
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_2
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX box1_2
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_3
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX box1_3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDY #0
-    LDX box1_4
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    LDY #0
-    LDX box1_4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-ENDIF2:
+    STA eCounter
     LDA counter
     PHA
     LDA #7
@@ -831,9 +682,9 @@ ENDIF2:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE3
-    JMP ENDIF3
-SKIP_TO_ELSE3:
+    BNE SKIP_TO_ELSE0
+    JMP ENDIF0
+SKIP_TO_ELSE0:
     LDA #0
     STA counter
     LDA vSpeed
@@ -843,11 +694,60 @@ SKIP_TO_ELSE3:
     JSR add
     PLA
     STA vSpeed
+    JMP ENDIF0
+ENDIF0:
+    LDA eCounter
+    PHA
+    LDA #7
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE1
+    JMP ENDIF1
+SKIP_TO_ELSE1:
+    LDA #0
+    STA eCounter
+    LDA eVSpeed
+    PHA
+    LDA g
+    PHA
+    JSR add
+    PLA
+    STA eVSpeed
+    JMP ENDIF1
+ENDIF1:
+    LDA vSpeed
+    PHA
+    LDA #254
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE2
+    JMP ENDIF2
+SKIP_TO_ELSE2:
+    LDA #254
+    STA vSpeed
+    JMP ENDIF2
+ENDIF2:
+    LDA eVSpeed
+    PHA
+    LDA #254
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE3
+    JMP ENDIF3
+SKIP_TO_ELSE3:
+    LDA #254
+    STA eVSpeed
     JMP ENDIF3
 ENDIF3:
     LDA vSpeed
     PHA
-    LDA #254
+    LDA #128
     PHA
     JSR greaterThan
     PLA
@@ -855,15 +755,25 @@ ENDIF3:
     BNE SKIP_TO_ELSE4
     JMP ENDIF4
 SKIP_TO_ELSE4:
-    LDA #254
-    STA vSpeed
+    LDA vSpeed
+    PHA
+    LDA #128
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA _y
+    PHA
+    JSR add
+    PLA
+    STA _y
     JMP ENDIF4
 ENDIF4:
     LDA vSpeed
     PHA
     LDA #128
     PHA
-    JSR greaterThan
+    JSR lowerThan
     PLA
     CMP #$00
     BNE SKIP_TO_ELSE5
@@ -871,31 +781,55 @@ ENDIF4:
 SKIP_TO_ELSE5:
     LDA vSpeed
     PHA
+    LDA _y
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA #128
+    PHA
+    JSR subtract
+    PLA
+    STA _y
+    JMP ENDIF5
+ENDIF5:
+    LDA eVSpeed
+    PHA
+    LDA #128
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE6
+    JMP ENDIF6
+SKIP_TO_ELSE6:
+    LDA eVSpeed
+    PHA
     LDA #128
     PHA
     JSR subtract
     PLA
     PHA
-    LDA _y
+    LDA ey
     PHA
     JSR add
     PLA
-    STA _y
-    JMP ENDIF5
-ENDIF5:
-    LDA vSpeed
+    STA ey
+    JMP ENDIF6
+ENDIF6:
+    LDA eVSpeed
     PHA
     LDA #128
     PHA
     JSR lowerThan
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE6
-    JMP ENDIF6
-SKIP_TO_ELSE6:
-    LDA vSpeed
+    BNE SKIP_TO_ELSE7
+    JMP ENDIF7
+SKIP_TO_ELSE7:
+    LDA eVSpeed
     PHA
-    LDA _y
+    LDA ey
     PHA
     JSR add
     PLA
@@ -904,32 +838,16 @@ SKIP_TO_ELSE6:
     PHA
     JSR subtract
     PLA
-    STA _y
-    JMP ENDIF6
-ENDIF6:
-    LDA #0
-    STA grounded
-    LDA _y
-    PHA
-    LDA #200
-    PHA
-    JSR greaterThan
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE7
-    JMP ENDIF7
-SKIP_TO_ELSE7:
-    LDA #200
-    STA _y
-    LDA #128
-    STA vSpeed
-    LDA #1
-    STA grounded
+    STA ey
     JMP ENDIF7
 ENDIF7:
-    LDA vSpeed
+    LDA #0
+    STA grounded
+    LDA #0
+    STA eGrounded
+    LDA _y
     PHA
-    LDA #128
+    LDA groundLevel
     PHA
     JSR greaterThan
     PLA
@@ -937,49 +855,50 @@ ENDIF7:
     BNE SKIP_TO_ELSE8
     JMP ENDIF8
 SKIP_TO_ELSE8:
-    LDY #0
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA groundLevel
+    STA _y
+    LDA #128
+    STA vSpeed
+    LDA #1
+    STA grounded
+    JMP ENDIF8
+ENDIF8:
+    LDA ey
     PHA
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA groundLevel
     PHA
-    JSR lowerThan
+    JSR greaterThan
     PLA
     CMP #$00
     BNE SKIP_TO_ELSE9
     JMP ENDIF9
 SKIP_TO_ELSE9:
+    LDA groundLevel
+    STA ey
+    LDA #128
+    STA eVSpeed
+    LDA #1
+    STA eGrounded
+    JMP ENDIF9
+ENDIF9:
     LDY #0
-    LDX hero5
+    LDX box1
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #8
+    LDA boxHeight
     PHA
     JSR add
     PLA
     PHA
-    LDA #1
+    LDA playerHeight
     PHA
     JSR subtract
     PLA
     PHA
-    LDY #0
-    LDX box1_1
-    STX temp
-    LDX #$02
-    STX temp2
-    LDA (temp), Y
+    LDA _y
     PHA
     JSR greaterThan
     PLA
@@ -987,15 +906,29 @@ SKIP_TO_ELSE9:
     BNE SKIP_TO_ELSE10
     JMP ENDIF10
 SKIP_TO_ELSE10:
-    LDA _x
+    LDA #10
+    LDY #0
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #10
+    LDY #3
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _y
     PHA
-    LDA #8
+    LDA playerHeight
     PHA
     JSR add
     PLA
     PHA
-    LDY #3
-    LDX box1_1
+    LDY #0
+    LDX box1
     STX temp
     LDX #$02
     STX temp2
@@ -1007,14 +940,33 @@ SKIP_TO_ELSE10:
     BNE SKIP_TO_ELSE11
     JMP ENDIF11
 SKIP_TO_ELSE11:
+    LDA #20
+    LDY #0
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #20
     LDY #3
-    LDX box1_2
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA _x
+    PHA
+    LDA playerWidth
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box1
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
-    PHA
-    LDA _x
     PHA
     JSR greaterThan
     PLA
@@ -1022,51 +974,203 @@ SKIP_TO_ELSE11:
     BNE SKIP_TO_ELSE12
     JMP ENDIF12
 SKIP_TO_ELSE12:
+    LDA #30
     LDY #0
-    LDX box1_1
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #10
+    LDY #3
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #3
+    LDX box1
     STX temp
     LDX #$02
     STX temp2
     LDA (temp), Y
     PHA
-    LDA #24
-    PHA
-    JSR subtract
-    PLA
-    PHA
-    LDA #1
+    LDA boxWidth
     PHA
     JSR add
+    PLA
+    PHA
+    LDA _x
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE13
+    JMP ENDIF13
+SKIP_TO_ELSE13:
+    LDA #40
+    LDY #0
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #20
+    LDY #3
+    LDX box2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA playerHeight
+    PHA
+    JSR subtract
     PLA
     STA _y
     LDA #128
     STA vSpeed
     LDA #1
     STA grounded
+    JMP ENDIF13
+ENDIF13:
     JMP ENDIF12
 ENDIF12:
     JMP ENDIF11
 ENDIF11:
     JMP ENDIF10
 ENDIF10:
-    JMP ENDIF9
-ENDIF9:
-    JMP ENDIF8
-ENDIF8:
-    LDA #0
-    STA moving
-    LDA pad1 ; Загрузка состояния кнопок для Player1
-    AND #BTN_RIGHT ; Маскирование для проверки кнопки
-    BEQ NotPressed13 ; Если кнопка не нажата, переходим к метке NotPressed13
-    LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck13 ; Переходим к концу проверки
-NotPressed13:
-    LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck13:
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA boxHeight
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA playerHeight
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA ey
+    PHA
+    JSR greaterThan
+    PLA
     CMP #$00
     BNE SKIP_TO_ELSE14
     JMP ENDIF14
 SKIP_TO_ELSE14:
+    LDA ey
+    PHA
+    LDA playerHeight
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE15
+    JMP ENDIF15
+SKIP_TO_ELSE15:
+    LDA ex
+    PHA
+    LDA playerWidth
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDY #3
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE16
+    JMP ENDIF16
+SKIP_TO_ELSE16:
+    LDY #3
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA boxWidth
+    PHA
+    JSR add
+    PLA
+    PHA
+    LDA ex
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE17
+    JMP ENDIF17
+SKIP_TO_ELSE17:
+    LDY #0
+    LDX box1
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA playerHeight
+    PHA
+    JSR subtract
+    PLA
+    STA ey
+    LDA #128
+    STA eVSpeed
+    LDA #1
+    STA eGrounded
+    JMP ENDIF17
+ENDIF17:
+    JMP ENDIF16
+ENDIF16:
+    JMP ENDIF15
+ENDIF15:
+    JMP ENDIF14
+ENDIF14:
+    LDA #0
+    STA moving
+    LDA #1
+    STA eMoving
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_RIGHT ; Маскирование для проверки кнопки
+    BEQ NotPressed18 ; Если кнопка не нажата, переходим к метке NotPressed18
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck18 ; Переходим к концу проверки
+NotPressed18:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck18:
+    CMP #$00
+    BNE SKIP_TO_ELSE19
+    JMP ENDIF19
+SKIP_TO_ELSE19:
     LDA #1
     STA flipped
     LDA #1
@@ -1080,14 +1184,14 @@ SKIP_TO_ELSE14:
     STA _x
     LDA grounded
     CMP #$00
-    BNE SKIP_TO_ELSE15
-    JMP ENDIF15
-SKIP_TO_ELSE15:
+    BNE SKIP_TO_ELSE20
+    JMP ENDIF20
+SKIP_TO_ELSE20:
     LDA eyesState
     CMP #$00
-    BNE SKIP_TO_ELSE16
-    JMP ELSE16
-SKIP_TO_ELSE16:
+    BNE SKIP_TO_ELSE21
+    JMP ELSE21
+SKIP_TO_ELSE21:
     LDA #89
     LDY #1
     LDX hero1
@@ -1116,8 +1220,8 @@ SKIP_TO_ELSE16:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF16
-ELSE16:
+    JMP ENDIF21
+ELSE21:
     LDA #91
     LDY #1
     LDX hero1
@@ -1146,7 +1250,7 @@ ELSE16:
     LDX #$02
     STX temp2
     STA (temp), Y
-ENDIF16:
+ENDIF21:
     LDA animCounter
     PHA
     LDA #1
@@ -1157,250 +1261,6 @@ ENDIF16:
     LDA animCounter
     PHA
     LDA #10
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE17
-    JMP ENDIF17
-SKIP_TO_ELSE17:
-    LDA #0
-    STA animCounter
-    LDA animFrame
-    PHA
-    LDA #1
-    PHA
-    JSR add
-    PLA
-    STA animFrame
-    LDA animFrame
-    PHA
-    LDA #4
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE18
-    JMP ENDIF18
-SKIP_TO_ELSE18:
-    LDA #0
-    STA animFrame
-    LDA #1
-    PHA
-    LDA eyesState
-    PHA
-    JSR subtract
-    PLA
-    STA eyesState
-    JMP ENDIF18
-ENDIF18:
-    LDA animFrame
-    PHA
-    LDA #0
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE19
-    JMP ENDIF19
-SKIP_TO_ELSE19:
-    LDA #105
-    LDY #1
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #104
-    LDY #1
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #121
-    LDY #1
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #120
-    LDY #1
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    JMP ENDIF19
-ENDIF19:
-    LDA animFrame
-    PHA
-    LDA #1
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE20
-    JMP ENDIF20
-SKIP_TO_ELSE20:
-    LDA #107
-    LDY #1
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #106
-    LDY #1
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #123
-    LDY #1
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #122
-    LDY #1
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    JMP ENDIF20
-ENDIF20:
-    LDA animFrame
-    PHA
-    LDA #2
-    PHA
-    JSR equal
-    PLA
-    CMP #$00
-    BNE SKIP_TO_ELSE21
-    JMP ENDIF21
-SKIP_TO_ELSE21:
-    LDA #109
-    LDY #1
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero3
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #108
-    LDY #1
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #64
-    LDY #2
-    LDX hero4
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #125
-    LDY #1
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero5
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #124
-    LDY #1
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    LDA #65
-    LDY #2
-    LDX hero6
-    STX temp
-    LDX #$02
-    STX temp2
-    STA (temp), Y
-    JMP ENDIF21
-ENDIF21:
-    LDA animFrame
-    PHA
-    LDA #3
     PHA
     JSR equal
     PLA
@@ -1408,6 +1268,114 @@ ENDIF21:
     BNE SKIP_TO_ELSE22
     JMP ENDIF22
 SKIP_TO_ELSE22:
+    LDA #0
+    STA animCounter
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA animFrame
+    LDA animFrame
+    PHA
+    LDA #4
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE23
+    JMP ENDIF23
+SKIP_TO_ELSE23:
+    LDA #0
+    STA animFrame
+    LDA #1
+    PHA
+    LDA eyesState
+    PHA
+    JSR subtract
+    PLA
+    STA eyesState
+    JMP ENDIF23
+ENDIF23:
+    LDA animFrame
+    PHA
+    LDA #0
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE24
+    JMP ENDIF24
+SKIP_TO_ELSE24:
+    LDA #105
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #104
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #121
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #120
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF24
+ENDIF24:
+    LDA animFrame
+    PHA
+    LDA #1
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE25
+    JMP ENDIF25
+SKIP_TO_ELSE25:
     LDA #107
     LDY #1
     LDX hero3
@@ -1464,26 +1432,162 @@ SKIP_TO_ELSE22:
     LDX #$02
     STX temp2
     STA (temp), Y
+    JMP ENDIF25
+ENDIF25:
+    LDA animFrame
+    PHA
+    LDA #2
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE26
+    JMP ENDIF26
+SKIP_TO_ELSE26:
+    LDA #109
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #108
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #125
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #124
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF26
+ENDIF26:
+    LDA animFrame
+    PHA
+    LDA #3
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE27
+    JMP ENDIF27
+SKIP_TO_ELSE27:
+    LDA #107
+    LDY #1
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #106
+    LDY #1
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #64
+    LDY #2
+    LDX hero4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #65
+    LDY #2
+    LDX hero6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF27
+ENDIF27:
     JMP ENDIF22
 ENDIF22:
-    JMP ENDIF17
-ENDIF17:
-    JMP ENDIF15
-ENDIF15:
-    JMP ENDIF14
-ENDIF14:
+    JMP ENDIF20
+ENDIF20:
+    JMP ENDIF19
+ENDIF19:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_LEFT ; Маскирование для проверки кнопки
-    BEQ NotPressed23 ; Если кнопка не нажата, переходим к метке NotPressed23
+    BEQ NotPressed28 ; Если кнопка не нажата, переходим к метке NotPressed28
     LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck23 ; Переходим к концу проверки
-NotPressed23:
+    JMP EndCheck28 ; Переходим к концу проверки
+NotPressed28:
     LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck23:
+EndCheck28:
     CMP #$00
-    BNE SKIP_TO_ELSE24
-    JMP ENDIF24
-SKIP_TO_ELSE24:
+    BNE SKIP_TO_ELSE29
+    JMP ENDIF29
+SKIP_TO_ELSE29:
     LDA #0
     STA flipped
     LDA #1
@@ -1497,14 +1601,14 @@ SKIP_TO_ELSE24:
     STA _x
     LDA grounded
     CMP #$00
-    BNE SKIP_TO_ELSE25
-    JMP ENDIF25
-SKIP_TO_ELSE25:
+    BNE SKIP_TO_ELSE30
+    JMP ENDIF30
+SKIP_TO_ELSE30:
     LDA eyesState
     CMP #$00
-    BNE SKIP_TO_ELSE26
-    JMP ELSE26
-SKIP_TO_ELSE26:
+    BNE SKIP_TO_ELSE31
+    JMP ELSE31
+SKIP_TO_ELSE31:
     LDA #88
     LDY #1
     LDX hero1
@@ -1533,8 +1637,8 @@ SKIP_TO_ELSE26:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF26
-ELSE26:
+    JMP ENDIF31
+ELSE31:
     LDA #90
     LDY #1
     LDX hero1
@@ -1563,7 +1667,7 @@ ELSE26:
     LDX #$02
     STX temp2
     STA (temp), Y
-ENDIF26:
+ENDIF31:
     LDA animCounter
     PHA
     LDA #1
@@ -1578,9 +1682,9 @@ ENDIF26:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE27
-    JMP ENDIF27
-SKIP_TO_ELSE27:
+    BNE SKIP_TO_ELSE32
+    JMP ENDIF32
+SKIP_TO_ELSE32:
     LDA #0
     STA animCounter
     LDA animFrame
@@ -1597,9 +1701,9 @@ SKIP_TO_ELSE27:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE28
-    JMP ENDIF28
-SKIP_TO_ELSE28:
+    BNE SKIP_TO_ELSE33
+    JMP ENDIF33
+SKIP_TO_ELSE33:
     LDA #0
     STA animFrame
     LDA #1
@@ -1609,8 +1713,8 @@ SKIP_TO_ELSE28:
     JSR subtract
     PLA
     STA eyesState
-    JMP ENDIF28
-ENDIF28:
+    JMP ENDIF33
+ENDIF33:
     LDA animFrame
     PHA
     LDA #0
@@ -1618,9 +1722,9 @@ ENDIF28:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE29
-    JMP ENDIF29
-SKIP_TO_ELSE29:
+    BNE SKIP_TO_ELSE34
+    JMP ENDIF34
+SKIP_TO_ELSE34:
     LDA #104
     LDY #1
     LDX hero3
@@ -1677,8 +1781,8 @@ SKIP_TO_ELSE29:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF29
-ENDIF29:
+    JMP ENDIF34
+ENDIF34:
     LDA animFrame
     PHA
     LDA #1
@@ -1686,9 +1790,9 @@ ENDIF29:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE30
-    JMP ENDIF30
-SKIP_TO_ELSE30:
+    BNE SKIP_TO_ELSE35
+    JMP ENDIF35
+SKIP_TO_ELSE35:
     LDA #106
     LDY #1
     LDX hero3
@@ -1745,8 +1849,8 @@ SKIP_TO_ELSE30:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF30
-ENDIF30:
+    JMP ENDIF35
+ENDIF35:
     LDA animFrame
     PHA
     LDA #2
@@ -1754,9 +1858,9 @@ ENDIF30:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE31
-    JMP ENDIF31
-SKIP_TO_ELSE31:
+    BNE SKIP_TO_ELSE36
+    JMP ENDIF36
+SKIP_TO_ELSE36:
     LDA #108
     LDY #1
     LDX hero3
@@ -1813,8 +1917,8 @@ SKIP_TO_ELSE31:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF31
-ENDIF31:
+    JMP ENDIF36
+ENDIF36:
     LDA animFrame
     PHA
     LDA #3
@@ -1822,9 +1926,9 @@ ENDIF31:
     JSR equal
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE32
-    JMP ENDIF32
-SKIP_TO_ELSE32:
+    BNE SKIP_TO_ELSE37
+    JMP ENDIF37
+SKIP_TO_ELSE37:
     LDA #106
     LDY #1
     LDX hero3
@@ -1881,19 +1985,958 @@ SKIP_TO_ELSE32:
     LDX #$02
     STX temp2
     STA (temp), Y
+    JMP ENDIF37
+ENDIF37:
     JMP ENDIF32
 ENDIF32:
-    JMP ENDIF27
-ENDIF27:
-    JMP ENDIF25
-ENDIF25:
-    JMP ENDIF24
-ENDIF24:
+    JMP ENDIF30
+ENDIF30:
+    JMP ENDIF29
+ENDIF29:
+    LDA eDirectionCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eDirectionCounter
+    LDA eDirectionCounter
+    PHA
+    LDA eDirectionInterval
+    PHA
+    JSR subtract
+    PLA
+    PHA
+    LDA #0
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE38
+    JMP ENDIF38
+SKIP_TO_ELSE38:
+    LDA #0
+    STA eDirectionCounter
+    LDA #1
+    PHA
+    LDA eFlipped
+    PHA
+    JSR subtract
+    PLA
+    STA eFlipped
+    LDA eRandomSeed
+    PHA
+    LDA #13
+    PHA
+    JSR add
+    PLA
+    STA eRandomSeed
+    LDA eRandomSeed
+    PHA
+    LDA #13
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE39
+    JMP ENDIF39
+SKIP_TO_ELSE39:
+    LDA eRandomSeed
+    PHA
+    LDA #7
+    PHA
+    JSR add
+    PLA
+    STA eRandomSeed
+    JMP ENDIF39
+ENDIF39:
+    LDA eRandomSeed
+    STA eDirectionInterval
+    LDA eDirectionInterval
+    PHA
+    LDA #50
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE40
+    JMP ELSE40
+SKIP_TO_ELSE40:
+    LDA eDirectionInterval
+    PHA
+    LDA #50
+    PHA
+    JSR add
+    PLA
+    STA eDirectionInterval
+    JMP ENDIF40
+ELSE40:
+    LDA eDirectionInterval
+    PHA
+    LDA #177
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE41
+    JMP ENDIF41
+SKIP_TO_ELSE41:
+    LDA eDirectionInterval
+    PHA
+    LDA #128
+    PHA
+    JSR subtract
+    PLA
+    STA eDirectionInterval
+    JMP ENDIF41
+ENDIF41:
+ENDIF40:
+    JMP ENDIF38
+ENDIF38:
+    LDA eJumpCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eJumpCounter
+    LDA eJumpCounter
+    PHA
+    LDA #150
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE42
+    JMP ENDIF42
+SKIP_TO_ELSE42:
+    LDA #0
+    STA eJumpCounter
+    LDA eGrounded
+    CMP #$00
+    BNE SKIP_TO_ELSE43
+    JMP ENDIF43
+SKIP_TO_ELSE43:
+    LDA jumpSpeed
+    STA eVSpeed
+    LDA #0
+    STA eCounter
+    JMP ENDIF43
+ENDIF43:
+    JMP ENDIF42
+ENDIF42:
+    LDA eFlipped
+    CMP #$00
+    BNE SKIP_TO_ELSE44
+    JMP ELSE44
+SKIP_TO_ELSE44:
+    LDA ex
+    PHA
+    LDA speed
+    PHA
+    JSR add
+    PLA
+    STA ex
+    JMP ENDIF44
+ELSE44:
+    LDA ex
+    PHA
+    LDA speed
+    PHA
+    JSR subtract
+    PLA
+    STA ex
+ENDIF44:
+    LDA eGrounded
+    CMP #$00
+    BNE SKIP_TO_ELSE45
+    JMP ENDIF45
+SKIP_TO_ELSE45:
+    LDA eFlipped
+    CMP #$00
+    BNE SKIP_TO_ELSE46
+    JMP ELSE46
+SKIP_TO_ELSE46:
+    LDA eEyesState
+    CMP #$00
+    BNE SKIP_TO_ELSE47
+    JMP ELSE47
+SKIP_TO_ELSE47:
+    LDA #89
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #88
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF47
+ELSE47:
+    LDA #91
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #90
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF47:
+    LDA eAnimCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eAnimCounter
+    LDA eAnimCounter
+    PHA
+    LDA #10
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE48
+    JMP ENDIF48
+SKIP_TO_ELSE48:
+    LDA #0
+    STA eAnimCounter
+    LDA eAnimFrame
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eAnimFrame
+    LDA eAnimFrame
+    PHA
+    LDA #4
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE49
+    JMP ENDIF49
+SKIP_TO_ELSE49:
+    LDA #0
+    STA eAnimFrame
+    LDA #1
+    PHA
+    LDA eEyesState
+    PHA
+    JSR subtract
+    PLA
+    STA eEyesState
+    JMP ENDIF49
+ENDIF49:
+    LDA eAnimFrame
+    PHA
+    LDA #0
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE50
+    JMP ENDIF50
+SKIP_TO_ELSE50:
+    LDA #105
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #104
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #121
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #120
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF50
+ENDIF50:
+    LDA eAnimFrame
+    PHA
+    LDA #1
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE51
+    JMP ENDIF51
+SKIP_TO_ELSE51:
+    LDA #107
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #106
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF51
+ENDIF51:
+    LDA eAnimFrame
+    PHA
+    LDA #2
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE52
+    JMP ENDIF52
+SKIP_TO_ELSE52:
+    LDA #109
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #108
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #125
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #124
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF52
+ENDIF52:
+    LDA eAnimFrame
+    PHA
+    LDA #3
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE53
+    JMP ENDIF53
+SKIP_TO_ELSE53:
+    LDA #107
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #106
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF53
+ENDIF53:
+    JMP ENDIF48
+ENDIF48:
+    JMP ENDIF46
+ELSE46:
+    LDA eEyesState
+    CMP #$00
+    BNE SKIP_TO_ELSE54
+    JMP ELSE54
+SKIP_TO_ELSE54:
+    LDA #88
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #89
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF54
+ELSE54:
+    LDA #90
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #91
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF54:
+    LDA eAnimCounter
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eAnimCounter
+    LDA eAnimCounter
+    PHA
+    LDA #10
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE55
+    JMP ENDIF55
+SKIP_TO_ELSE55:
+    LDA #0
+    STA eAnimCounter
+    LDA eAnimFrame
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    STA eAnimFrame
+    LDA eAnimFrame
+    PHA
+    LDA #4
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE56
+    JMP ENDIF56
+SKIP_TO_ELSE56:
+    LDA #0
+    STA eAnimFrame
+    LDA #1
+    PHA
+    LDA eEyesState
+    PHA
+    JSR subtract
+    PLA
+    STA eEyesState
+    JMP ENDIF56
+ENDIF56:
+    LDA eAnimFrame
+    PHA
+    LDA #0
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE57
+    JMP ENDIF57
+SKIP_TO_ELSE57:
+    LDA #104
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #105
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #120
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #121
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF57
+ENDIF57:
+    LDA eAnimFrame
+    PHA
+    LDA #1
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE58
+    JMP ENDIF58
+SKIP_TO_ELSE58:
+    LDA #106
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #107
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF58
+ENDIF58:
+    LDA eAnimFrame
+    PHA
+    LDA #2
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE59
+    JMP ENDIF59
+SKIP_TO_ELSE59:
+    LDA #108
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #109
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #124
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #125
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF59
+ENDIF59:
+    LDA eAnimFrame
+    PHA
+    LDA #3
+    PHA
+    JSR equal
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE60
+    JMP ENDIF60
+SKIP_TO_ELSE60:
+    LDA #106
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #107
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #122
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #123
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF60
+ENDIF60:
+    JMP ENDIF55
+ENDIF55:
+ENDIF46:
+    JMP ENDIF45
+ENDIF45:
     LDA grounded
     CMP #$00
-    BNE SKIP_TO_ELSE33
-    JMP ELSE33
-SKIP_TO_ELSE33:
+    BNE SKIP_TO_ELSE61
+    JMP ELSE61
+SKIP_TO_ELSE61:
     LDA #1
     PHA
     LDA moving
@@ -1901,14 +2944,14 @@ SKIP_TO_ELSE33:
     JSR subtract
     PLA
     CMP #$00
-    BNE SKIP_TO_ELSE34
-    JMP ENDIF34
-SKIP_TO_ELSE34:
+    BNE SKIP_TO_ELSE62
+    JMP ENDIF62
+SKIP_TO_ELSE62:
     LDA flipped
     CMP #$00
-    BNE SKIP_TO_ELSE35
-    JMP ELSE35
-SKIP_TO_ELSE35:
+    BNE SKIP_TO_ELSE63
+    JMP ELSE63
+SKIP_TO_ELSE63:
     LDA #89
     LDY #1
     LDX hero1
@@ -1993,8 +3036,8 @@ SKIP_TO_ELSE35:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF35
-ELSE35:
+    JMP ENDIF63
+ELSE63:
     LDA #88
     LDY #1
     LDX hero1
@@ -2079,16 +3122,16 @@ ELSE35:
     LDX #$02
     STX temp2
     STA (temp), Y
-ENDIF35:
-    JMP ENDIF34
-ENDIF34:
-    JMP ENDIF33
-ELSE33:
+ENDIF63:
+    JMP ENDIF62
+ENDIF62:
+    JMP ENDIF61
+ELSE61:
     LDA flipped
     CMP #$00
-    BNE SKIP_TO_ELSE36
-    JMP ELSE36
-SKIP_TO_ELSE36:
+    BNE SKIP_TO_ELSE64
+    JMP ELSE64
+SKIP_TO_ELSE64:
     LDA #87
     LDY #1
     LDX hero1
@@ -2173,8 +3216,8 @@ SKIP_TO_ELSE36:
     LDX #$02
     STX temp2
     STA (temp), Y
-    JMP ENDIF36
-ELSE36:
+    JMP ENDIF64
+ELSE64:
     LDA #86
     LDY #1
     LDX hero1
@@ -2259,33 +3302,502 @@ ELSE36:
     LDX #$02
     STX temp2
     STA (temp), Y
-ENDIF36:
-ENDIF33:
+ENDIF64:
+ENDIF61:
+    LDA eGrounded
+    CMP #$00
+    BNE SKIP_TO_ELSE65
+    JMP ELSE65
+SKIP_TO_ELSE65:
+    LDA #1
+    PHA
+    LDA eMoving
+    PHA
+    JSR subtract
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE66
+    JMP ENDIF66
+SKIP_TO_ELSE66:
+    LDA eFlipped
+    CMP #$00
+    BNE SKIP_TO_ELSE67
+    JMP ELSE67
+SKIP_TO_ELSE67:
+    LDA #89
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #88
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #93
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #92
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #117
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #116
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF67
+ELSE67:
+    LDA #88
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #89
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #92
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #93
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #116
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #117
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF67:
+    JMP ENDIF66
+ENDIF66:
+    JMP ENDIF65
+ELSE65:
+    LDA eFlipped
+    CMP #$00
+    BNE SKIP_TO_ELSE68
+    JMP ELSE68
+SKIP_TO_ELSE68:
+    LDA #87
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #86
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #103
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #102
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #66
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #119
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #118
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #67
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP ENDIF68
+ELSE68:
+    LDA #86
+    LDY #1
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy1
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #87
+    LDY #1
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy2
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #102
+    LDY #1
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy3
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #103
+    LDY #1
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #2
+    LDY #2
+    LDX enemy4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #118
+    LDY #1
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy5
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #119
+    LDY #1
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    LDA #3
+    LDY #2
+    LDX enemy6
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF68:
+ENDIF65:
+    LDA _x
+    PHA
+    LDA #0
+    PHA
+    JSR lowerThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE69
+    JMP ENDIF69
+SKIP_TO_ELSE69:
+    LDA #0
+    STA _x
+    JMP ENDIF69
+ENDIF69:
+    LDA _x
+    PHA
+    LDA #240
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BNE SKIP_TO_ELSE70
+    JMP ENDIF70
+SKIP_TO_ELSE70:
+    LDA #0
+    STA _x
+    JMP ENDIF70
+ENDIF70:
     LDA pad1 ; Загрузка состояния кнопок для Player1
     AND #BTN_A ; Маскирование для проверки кнопки
-    BEQ NotPressed37 ; Если кнопка не нажата, переходим к метке NotPressed37
+    BEQ NotPressed71 ; Если кнопка не нажата, переходим к метке NotPressed71
     LDA #$01 ; Если кнопка нажата, загружаем 1
-    JMP EndCheck37 ; Переходим к концу проверки
-NotPressed37:
+    JMP EndCheck71 ; Переходим к концу проверки
+NotPressed71:
     LDA #$00 ; Загружаем 0, так как кнопка не нажата
-EndCheck37:
+EndCheck71:
     CMP #$00
-    BNE SKIP_TO_ELSE38
-    JMP ENDIF38
-SKIP_TO_ELSE38:
+    BNE SKIP_TO_ELSE72
+    JMP ENDIF72
+SKIP_TO_ELSE72:
     LDA grounded
     CMP #$00
-    BNE SKIP_TO_ELSE39
-    JMP ENDIF39
-SKIP_TO_ELSE39:
+    BNE SKIP_TO_ELSE73
+    JMP ENDIF73
+SKIP_TO_ELSE73:
     LDA jumpSpeed
     STA vSpeed
     LDA #0
     STA counter
-    JMP ENDIF39
-ENDIF39:
-    JMP ENDIF38
-ENDIF38:
+    JMP ENDIF73
+ENDIF73:
+    JMP ENDIF72
+ENDIF72:
+    LDA pad1 ; Загрузка состояния кнопок для Player1
+    AND #BTN_SELECT ; Маскирование для проверки кнопки
+    BEQ NotPressed74 ; Если кнопка не нажата, переходим к метке NotPressed74
+    LDA #$01 ; Если кнопка нажата, загружаем 1
+    JMP EndCheck74 ; Переходим к концу проверки
+NotPressed74:
+    LDA #$00 ; Загружаем 0, так как кнопка не нажата
+EndCheck74:
+    CMP #$00
+    BNE SKIP_TO_ELSE75
+    JMP ELSE75
+SKIP_TO_ELSE75:
+    LDA #5
+    STA i
+WHILE_START_76:
+    LDA i
+    PHA
+    LDA #1
+    PHA
+    JSR greaterThan
+    PLA
+    CMP #$00
+    BEQ WHILE_END_76
+    LDA i
+    PHA
+    LDA #1
+    PHA
+    JSR subtract
+    PLA
+    STA i
+    LDY #3
+    LDX box4
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX box4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+    JMP WHILE_START_76
+WHILE_END_76:
+    JMP ENDIF75
+ELSE75:
+    LDY #3
+    LDX box4
+    STX temp
+    LDX #$02
+    STX temp2
+    LDA (temp), Y
+    PHA
+    LDA #1
+    PHA
+    JSR add
+    PLA
+    LDY #3
+    LDX box4
+    STX temp
+    LDX #$02
+    STX temp2
+    STA (temp), Y
+ENDIF75:
     LDA _x
     LDY #3
     LDX hero1
@@ -2624,34 +4136,36 @@ lowerThan:
     rts         ; Возвращаемся из подпрограммы
 
 greaterThan:
-    pla         ; Извлекаем верхнее значение из стека в A
-    tax         ; Сохраняем извлеченное значение в X
-    pla         ; Извлекаем следующее значение из стека в A
-    tay         ; Сохраняем это значение в Y
+    pla ; Извлекаем верхнее значение из стека в A
+    tax ; Сохраняем извлеченное значение в X
+    pla ; Извлекаем следующее значение из стека в A
+    tay ; Сохраняем это значение в Y
 
     ; Теперь, когда значения сохранены в X и Y, выполняем сравнение двух других значений
-    pla         ; Извлекаем первое значение для сравнения (второе число)
-    sta temp    ; Сохраняем его во временной переменной
-    pla         ; Извлекаем второе значение для сравнения (первое число)
-    cmp temp    ; Сравниваем его с первым значением, сохраненным в temp
+    pla ; Извлекаем первое значение для сравнения (второе число)
+    sta temp ; Сохраняем его во временной переменной
+    pla ; Извлекаем второе значение для сравнения (первое число)
+    cmp temp ; Сравниваем его с первым значением, сохраненным в temp
+    beq @isNotGreater ; Если числа равны, переходим к метке isNotGreater
+    bcs @isGreater ; Если первое число больше второго, переходим к метке isGreater
 
-    bcs @isGreater ; Если первое число больше или равно второго, переходим к метке isGreater
-    lda #$00     ; Загружаем 0 в A, первое число не больше второго
-    jmp @done    ; Переходим к завершению функции
+@isNotGreater:
+    lda #$00 ; Загружаем 0 в A, первое число не больше второго
+    jmp @done ; Переходим к завершению функции
 
 @isGreater:
-    lda #$01     ; Загружаем 1 в A, первое число больше второго
+    lda #$01 ; Загружаем 1 в A, первое число больше второго
 
 @done:
-    pha          ; Сохраняем результат сравнения (0 или 1) обратно в стек
+    pha ; Сохраняем результат сравнения (0 или 1) обратно в стек
 
     ; Восстанавливаем значения, которые были сохранены в X и Y
-    tya          ; Перемещаем значение из Y обратно в A
-    pha          ; Сохраняем его обратно в стек
-    txa          ; Перемещаем значение из X обратно в A
-    pha          ; Сохраняем его обратно в стек
+    tya ; Перемещаем значение из Y обратно в A
+    pha ; Сохраняем его обратно в стек
+    txa ; Перемещаем значение из X обратно в A
+    pha ; Сохраняем его обратно в стек
 
-    rts          ; Возвращаемся из подпрограммы
+    rts ; Возвращаемся из подпрограммы
 
 
 

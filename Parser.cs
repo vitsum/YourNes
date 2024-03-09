@@ -151,6 +151,34 @@ namespace NesCompiler
             return ifNode;
         }
 
+        private AstNode ParseWhileStatement()
+        {
+            // Expect the current token to be "while", so skip it
+            _current++;
+
+            // Parse the condition inside parentheses
+            if (_tokens[_current++].Type != "(")
+            {
+                throw new Exception("Expected '(' after 'while'");
+            }
+
+            var condition = ParseExpression();
+
+            if (_tokens[_current++].Type != ")")
+            {
+                throw new Exception("Expected ')' after while condition");
+            }
+
+            // Parse the statement block for the loop body
+            var body = ParseStatementBlock();
+
+            var whileNode = new AstNode("WhileStatement");
+            whileNode.Children.Add(condition);
+            whileNode.Children.Add(body);
+
+            return whileNode;
+        }
+
         private AstNode ParseStatementBlock()
         {
             if (_tokens[_current].Type != "{")
@@ -265,6 +293,10 @@ namespace NesCompiler
                 node = ParseIfStatement();
                 // For 'if' statements, the ParseIfStatement method handles the block and semicolon,
                 // so we don't expect a semicolon immediately after it.
+            }
+            else if (token.Type == "symbol" && token.Value == "while")
+            {
+                node = ParseWhileStatement();
             }
             else if (token.Type == "symbol" && token.Value == "return")
             {

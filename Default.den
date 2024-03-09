@@ -4,12 +4,20 @@ byte ex = 50;
 byte ey = 20;
 byte speed = 1;
 byte vSpeed = 128;
+byte eVSpeed = 128;
 byte g = 1;
 byte jumpSpeed = 125;
-byte test = 0;
-
 byte grounded = 0;
+byte eGrounded = 0;
 byte flipped = 0;
+byte eFlipped = 0;
+
+byte playerHeight = 24;
+byte playerWidth = 16;
+byte boxHeight = 4;
+byte boxWidth = 64;
+
+byte groundLevel = 198;
 
 Sprite hero1;
 Sprite hero2;
@@ -18,11 +26,6 @@ Sprite hero4;
 Sprite hero5;
 Sprite hero6;
 
-Sprite box1_1;
-Sprite box1_2;
-Sprite box1_3;
-Sprite box1_4;
-
 Sprite enemy1;
 Sprite enemy2;
 Sprite enemy3;
@@ -30,21 +33,33 @@ Sprite enemy4;
 Sprite enemy5;
 Sprite enemy6;
 
+Sprite box1;
+Sprite box2;
+Sprite box3;
+Sprite box4;
+
 byte counter = 0;
 byte animCounter = 0;
 byte animFrame = 0;
 byte eyesState = 0;
 
+byte eCounter = 0;
+byte eAnimCounter = 0;
+byte eAnimFrame = 0;
+byte eEyesState = 0;
+
 byte moving = 0;
+byte eMoving = 0;
 
-byte platformMovingCounter = 0;
-byte platformUp = 0;
+byte eDirectionCounter = 0;
+byte eJumpCounter = 0;
 
-byte init = 0;
+byte eRandomSeed = 1;
+byte eDirectionInterval = 0;
+
+byte i = 0;
 
 void Start(){
-
-  //cursorSprite = CreateSprite(_x, _y, 0, 2); //x, y, tile, attribute
   hero1 = CreateSprite(_x,_y, 88, 0);
   hero2 = CreateSprite(_x+8,_y, 89, 0);
   hero3 = CreateSprite(_x,_y+8, 104, 0);
@@ -52,54 +67,39 @@ void Start(){
   hero5 = CreateSprite(_x,_y+8+8, 120, 1);
   hero6 = CreateSprite(_x+8,_y+8+8, 121, 1);
 
-  box1_1 = CreateSprite(_x +100, _y + 165, 52,      2);
-  box1_2 = CreateSprite(_x +100+8, _y + 165, 53,    2);
-  box1_3 = CreateSprite(_x +100, _y + 165+8, 68,    2);
-  box1_4 = CreateSprite(_x +100+8, _y + 165+8, 69,  2);
+  enemy1 = CreateSprite(ex, ey, 88, 2);
+  enemy2 = CreateSprite(ex+8, ey, 89, 2);
+  enemy3 = CreateSprite(ex, ey+8, 104, 2);
+  enemy4 = CreateSprite(ex+8, ey+8, 105, 2);
+  enemy5 = CreateSprite(ex, ey+8+8, 120, 3);
+  enemy6 = CreateSprite(ex+8, ey+8+8, 121, 3);
 
+  box1 = CreateSprite(100, 172+20, 52, 4);
+  box2 = CreateSprite(108, 172+20, 53, 4);
+  box3 = CreateSprite(100, 180+20, 52, 4);
+  box4 = CreateSprite(108, 180+20, 53, 4);
 }
 
 void Update(){
-  if(init == 0){
-    init = 1;
-
-    enemy1 = CreateSprite(ex,ey, 88,      2);
-    enemy2 = CreateSprite(ex+8,ey, 89,    2);
-    enemy3 = CreateSprite(ex,ey+8, 104,   2);
-    enemy4 = CreateSprite(ex+8,ey+8, 105, 2);
-    enemy5 = CreateSprite(ex,ey+8+8, 120, 1);
-    enemy6 = CreateSprite(ex+8,ey+8+8, 121, 1);
-  }
-
   counter = counter + 1;
-
-  platformMovingCounter = platformMovingCounter +1;
-
-  if(platformMovingCounter == 30){
-    platformMovingCounter = 0;
-    platformUp = 1 - platformUp;
-  }
-
-  if(platformUp){
-    box1_1.Y = box1_1.Y - 1;
-    box1_2.Y = box1_2.Y - 1;
-    box1_3.Y = box1_3.Y - 1;
-    box1_4.Y = box1_4.Y - 1;
-    
-  } else {
-    box1_1.Y = box1_1.Y + 1;
-    box1_2.Y = box1_2.Y + 1;
-    box1_3.Y = box1_3.Y + 1;
-    box1_4.Y = box1_4.Y + 1;
-  }
+  eCounter = eCounter + 1;
 
   if(counter == 7){
     counter = 0;
     vSpeed = vSpeed + g;
   }
 
+  if(eCounter == 7){
+    eCounter = 0;
+    eVSpeed = eVSpeed + g;
+  }
+
   if(vSpeed > 254){
     vSpeed = 254;
+  }
+
+  if(eVSpeed > 254){
+    eVSpeed = 254;
   }
 
   if(vSpeed > 128){
@@ -110,51 +110,92 @@ void Update(){
     _y = vSpeed + _y - 128;
   }
 
+  if(eVSpeed > 128){
+    ey = eVSpeed - 128 + ey;
+  }
+
+  if(eVSpeed < 128){
+    ey = eVSpeed + ey - 128;
+  }
 
   grounded = 0;
+  eGrounded = 0;
 
-  if(_y > 200){
-    _y = 200;
+  if(_y > groundLevel){
+    _y = groundLevel;
     vSpeed = 128;
     grounded = 1;
   }
 
-  if(vSpeed > 128){ //если падаем
-    if(hero5.Y < box1_1.Y){ // если игрок выше нижней границы бокса
-      if(hero5.Y +8 -1 > box1_1.Y){ //если игрок ниже верхней границы бокса
-        if(_x + 8 > box1_1.X){ //если середина игрока больше левой границы бокса
-          if(box1_2.X > _x){ //если середина игрока меньше правой границы бокса
-            _y = box1_1.Y - 24 +1; //устанавливаем позицию игрока чтобы он стоял на платформе
-            vSpeed = 128; //обнуляем вертикальную скорость
-            grounded = 1; //состояние приземлен
-          }
-        }
-      }
-    }
-
-    
+  if(ey > groundLevel){
+    ey = groundLevel;
+    eVSpeed = 128;
+    eGrounded = 1;
   }
 
+// Проверка на приземление игрока на платформу или небольшое проникновение в нее
+if (box1.Y + boxHeight - playerHeight > _y) { // Игрок на уровне платформы или чуть погрузился в нее
+  box2.Y = 10;
+  box2.X = 10;
+ if(_y + playerHeight > box1.Y) {
+ box2.Y = 20;
+ box2.X = 20;
+    if (_x + playerWidth > box1.X) { // Левая сторона игрока пересекает начало коробки по оси X
+      box2.Y = 30;
+      box2.X = 10;
+      if ( box1.X + boxWidth > _x) { // Правая сторона игрока не выходит за границы коробки по оси X
+        box2.Y = 40;
+        box2.X = 20;
+        // Приземление игрока
+        _y = box1.Y - playerHeight; // Корректируем положение игрока по Y, чтобы "приземлить" его на платформу
+        vSpeed = 128; // Сбрасываем вертикальную скорость
+        grounded = 1; // Устанавливаем статус "на земле"
+      }
+    }
+ }
+}
 
+
+// Проверка на приземление врага на платформу или небольшое проникновение в нее
+if (box1.Y + boxHeight - playerHeight > ey)
+{
+    // Враг на уровне платформы или чуть погрузился в нее
+    if (ey + playerHeight > box1.Y)
+    {
+        if (ex + playerWidth > box1.X)
+        {
+            // Левая сторона врага пересекает начало коробки по оси X
+            if (box1.X + boxWidth > ex)
+            {
+                // Правая сторона врага не выходит за границы коробки по оси X
+                // Приземление врага
+                ey = box1.Y - playerHeight;
+                // Корректируем положение врага по Y, чтобы "приземлить" его на платформу
+                eVSpeed = 128;
+                // Сбрасываем вертикальную скорость врага
+                eGrounded = 1;
+                // Устанавливаем статус "на земле" для врага
+            }
+        }
+    }
+}
 
   moving = 0;
+  eMoving = 1;
 
   if(Input.GetKey(KeyCode.Player1.Right)){
     flipped = 1;
     moving = 1;
     _x = _x + speed;
 
-
     if(grounded){
-
       if(eyesState){
-        hero1.Tile = 89; hero1.Attribute = 64; // Отражаем горизонтально
+        hero1.Tile = 89; hero1.Attribute = 64;
         hero2.Tile = 88; hero2.Attribute = 64;
       } else {
         hero1.Tile = 91; hero1.Attribute = 64;
         hero2.Tile = 90; hero2.Attribute = 64;
       }
-
 
       animCounter = animCounter + 1;
 
@@ -170,7 +211,7 @@ void Update(){
         if(animFrame == 0){
           hero3.Tile = 105; hero3.Attribute = 64;
           hero4.Tile = 104; hero4.Attribute = 64;
-          hero5.Tile = 121; hero5.Attribute = 65; // Учитывая начальный атрибут 1
+          hero5.Tile = 121; hero5.Attribute = 65;
           hero6.Tile = 120; hero6.Attribute = 65;
         }
         if(animFrame == 1){
@@ -186,7 +227,7 @@ void Update(){
           hero6.Tile = 124; hero6.Attribute = 65;
         }
         if(animFrame == 3){
-          hero3.Tile = 107; hero3.Attribute = 64; // Повторение для анимации
+          hero3.Tile = 107; hero3.Attribute = 64;
           hero4.Tile = 106; hero4.Attribute = 64;
           hero5.Tile = 123; hero5.Attribute = 65;
           hero6.Tile = 122; hero6.Attribute = 65;
@@ -195,14 +236,13 @@ void Update(){
     }
   }
 
-
   if(Input.GetKey(KeyCode.Player1.Left)){
     flipped = 0;
     moving = 1;
     _x = _x - speed;
     if(grounded){
       if(eyesState){
-        hero1.Tile = 88; hero1.Attribute = 0; // Возвращаем атрибуты к исходным значениям
+        hero1.Tile = 88; hero1.Attribute = 0;
         hero2.Tile = 89; hero2.Attribute = 0;
       } else {
         hero1.Tile = 90; hero1.Attribute = 0;
@@ -216,14 +256,12 @@ void Update(){
         if(animFrame == 4){
           animFrame = 0;
           eyesState = 1 - eyesState;
-
-          
         }
 
         if(animFrame == 0){
           hero3.Tile = 104; hero3.Attribute = 0;
           hero4.Tile = 105; hero4.Attribute = 0;
-          hero5.Tile = 120; hero5.Attribute = 1; // Сохраняем исходное значение атрибута, если оно было 1
+          hero5.Tile = 120; hero5.Attribute = 1;
           hero6.Tile = 121; hero6.Attribute = 1;
         }
         if(animFrame == 1){
@@ -239,7 +277,7 @@ void Update(){
           hero6.Tile = 125; hero6.Attribute = 1;
         }
         if(animFrame == 3){
-          hero3.Tile = 106; hero3.Attribute = 0; // Повторение для цикличности анимации
+          hero3.Tile = 106; hero3.Attribute = 0;
           hero4.Tile = 107; hero4.Attribute = 0;
           hero5.Tile = 122; hero5.Attribute = 1;
           hero6.Tile = 123; hero6.Attribute = 1;
@@ -248,7 +286,141 @@ void Update(){
     }
   }
 
-  
+  eDirectionCounter = eDirectionCounter + 1;
+if (eDirectionCounter - eDirectionInterval > 0)
+{
+    eDirectionCounter = 0;
+    eFlipped = 1 - eFlipped;
+    
+    // Генерируем новое псевдослучайное число с помощью простого алгоритма
+    eRandomSeed = eRandomSeed + 13;
+    if (eRandomSeed < 13)
+    {
+        eRandomSeed = eRandomSeed + 7;
+    }
+    
+    // Генерируем новый псевдослучайный интервал между сменами направления
+    eDirectionInterval = eRandomSeed;
+    if (eDirectionInterval < 50)
+    {
+        eDirectionInterval = eDirectionInterval + 50;
+    }
+    else
+    {
+        if (eDirectionInterval > 177)
+        {
+            eDirectionInterval = eDirectionInterval - 128;
+        }
+    }
+}
+
+  eJumpCounter = eJumpCounter + 1;
+  if(eJumpCounter == 150){
+    eJumpCounter = 0;
+    if(eGrounded){
+      eVSpeed = jumpSpeed;
+      eCounter = 0;
+    }
+  }
+
+  if(eFlipped){
+    ex = ex + speed;
+  } else {
+    ex = ex - speed;
+  }
+
+  if(eGrounded){
+    if(eFlipped){
+      if(eEyesState){
+        enemy1.Tile = 89; enemy1.Attribute = 66;
+        enemy2.Tile = 88; enemy2.Attribute = 66;
+      } else {
+        enemy1.Tile = 91; enemy1.Attribute = 66;
+        enemy2.Tile = 90; enemy2.Attribute = 66;
+      }
+
+      eAnimCounter = eAnimCounter + 1;
+
+      if(eAnimCounter == 10){
+        eAnimCounter = 0;
+        eAnimFrame = eAnimFrame + 1;
+
+        if(eAnimFrame == 4){
+          eAnimFrame = 0;
+          eEyesState = 1 - eEyesState;
+        }
+
+        if(eAnimFrame == 0){
+          enemy3.Tile = 105; enemy3.Attribute = 66;
+          enemy4.Tile = 104; enemy4.Attribute = 66;
+          enemy5.Tile = 121; enemy5.Attribute = 67;
+          enemy6.Tile = 120; enemy6.Attribute = 67;
+        }
+        if(eAnimFrame == 1){
+          enemy3.Tile = 107; enemy3.Attribute = 66;
+          enemy4.Tile = 106; enemy4.Attribute = 66;
+          enemy5.Tile = 123; enemy5.Attribute = 67;
+          enemy6.Tile = 122; enemy6.Attribute = 67;
+        }
+        if(eAnimFrame == 2){
+          enemy3.Tile = 109; enemy3.Attribute = 66;
+          enemy4.Tile = 108; enemy4.Attribute = 66;
+          enemy5.Tile = 125; enemy5.Attribute = 67;
+          enemy6.Tile = 124; enemy6.Attribute = 67;
+        }
+        if(eAnimFrame == 3){
+          enemy3.Tile = 107; enemy3.Attribute = 66;
+          enemy4.Tile = 106; enemy4.Attribute = 66;
+          enemy5.Tile = 123; enemy5.Attribute = 67;
+          enemy6.Tile = 122; enemy6.Attribute = 67;
+        }
+      }
+    } else {
+      if(eEyesState){
+        enemy1.Tile = 88; enemy1.Attribute = 2;
+        enemy2.Tile = 89; enemy2.Attribute = 2;
+      } else {
+        enemy1.Tile = 90; enemy1.Attribute = 2;
+        enemy2.Tile = 91; enemy2.Attribute = 2;
+      }
+
+      eAnimCounter = eAnimCounter + 1;
+      if(eAnimCounter == 10){
+        eAnimCounter = 0;
+        eAnimFrame = eAnimFrame + 1;
+        if(eAnimFrame == 4){
+          eAnimFrame = 0;
+          eEyesState = 1 - eEyesState;
+        }
+
+        if(eAnimFrame == 0){
+          enemy3.Tile = 104; enemy3.Attribute = 2;
+          enemy4.Tile = 105; enemy4.Attribute = 2;
+          enemy5.Tile = 120; enemy5.Attribute = 3;
+          enemy6.Tile = 121; enemy6.Attribute = 3;
+        }
+        if(eAnimFrame == 1){
+          enemy3.Tile = 106; enemy3.Attribute = 2;
+          enemy4.Tile = 107; enemy4.Attribute = 2;
+          enemy5.Tile = 122; enemy5.Attribute = 3;
+          enemy6.Tile = 123; enemy6.Attribute = 3;
+        }
+        if(eAnimFrame == 2){
+          enemy3.Tile = 108; enemy3.Attribute = 2;
+          enemy4.Tile = 109; enemy4.Attribute = 2;
+          enemy5.Tile = 124; enemy5.Attribute = 3;
+          enemy6.Tile = 125; enemy6.Attribute = 3;
+        }
+        if(eAnimFrame == 3){
+          enemy3.Tile = 106; enemy3.Attribute = 2;
+          enemy4.Tile = 107; enemy4.Attribute = 2;
+          enemy5.Tile = 122; enemy5.Attribute = 3;
+          enemy6.Tile = 123; enemy6.Attribute = 3;
+        }
+      }
+    }
+  }
+
   if(grounded){
     if(1 - moving){
       if(flipped){
@@ -256,74 +428,119 @@ void Update(){
         hero2.Tile = 88; hero2.Attribute = 64;
         hero3.Tile = 93; hero3.Attribute = 64;
         hero4.Tile = 92; hero4.Attribute = 64;
-        hero5.Tile = 117; hero5.Attribute = 65; // Учитывая начальный атрибут 1
+        hero5.Tile = 117; hero5.Attribute = 65;
         hero6.Tile = 116; hero6.Attribute = 65;
       } else {
-        // Код для стоячего персонажа, ориентированного влево, без флипа
-        hero1.Tile = 88; hero1.Attribute = 0; // Обратный порядок для hero1 и hero2 по сравнению с флипнутым
+        hero1.Tile = 88; hero1.Attribute = 0;
         hero2.Tile = 89; hero2.Attribute = 0;
-        hero3.Tile = 92; hero3.Attribute = 0; // Аналогичное изменение для hero3 и hero4
+        hero3.Tile = 92; hero3.Attribute = 0;
         hero4.Tile = 93; hero4.Attribute = 0;
-        hero5.Tile = 116; hero5.Attribute = 1; // С учетом начального атрибута в 1
+        hero5.Tile = 116; hero5.Attribute = 1;
         hero6.Tile = 117; hero6.Attribute = 1;
       }
     }
   } else {
     if(flipped){
       hero1.Tile = 87; hero1.Attribute = 64;
-      hero2.Tile = 86; hero2.Attribute = 64;
-      hero3.Tile = 103; hero3.Attribute = 64;
-      hero4.Tile = 102; hero4.Attribute = 64;
-      hero5.Tile = 119; hero5.Attribute = 65; // Учитывая начальный атрибут 1
-      hero6.Tile = 118; hero6.Attribute = 65;
-    } else {
-      hero1.Tile = 86; hero1.Attribute = 0; // Обратный порядок для hero1 и hero2 по сравнению с флипнутым
-      hero2.Tile = 87; hero2.Attribute = 0;
-      hero3.Tile = 102; hero3.Attribute = 0; // Аналогичное изменение для hero3 и hero4
-      hero4.Tile = 103; hero4.Attribute = 0;
-      hero5.Tile = 118; hero5.Attribute = 1; // С учетом начального атрибута в 1
-      hero6.Tile = 119; hero6.Attribute = 1;
-    }
+      hero2.Tile = 86; hero2.Attribute = 64;hero3.Tile = 103; hero3.Attribute = 64;
+hero4.Tile = 102; hero4.Attribute = 64;
+hero5.Tile = 119; hero5.Attribute = 65;
+hero6.Tile = 118; hero6.Attribute = 65;
+} else {
+hero1.Tile = 86; hero1.Attribute = 0;
+hero2.Tile = 87; hero2.Attribute = 0;
+hero3.Tile = 102; hero3.Attribute = 0;
+hero4.Tile = 103; hero4.Attribute = 0;
+hero5.Tile = 118; hero5.Attribute = 1;
+hero6.Tile = 119; hero6.Attribute = 1;
+}
+}
+
+if(eGrounded){
+if(1 - eMoving){
+if(eFlipped){
+enemy1.Tile = 89; enemy1.Attribute = 66;
+enemy2.Tile = 88; enemy2.Attribute = 66;
+enemy3.Tile = 93; enemy3.Attribute = 66;
+enemy4.Tile = 92; enemy4.Attribute = 66;
+enemy5.Tile = 117; enemy5.Attribute = 67;
+enemy6.Tile = 116; enemy6.Attribute = 67;
+} else {
+enemy1.Tile = 88; enemy1.Attribute = 2;
+enemy2.Tile = 89; enemy2.Attribute = 2;
+enemy3.Tile = 92; enemy3.Attribute = 2;
+enemy4.Tile = 93; enemy4.Attribute = 2;
+enemy5.Tile = 116; enemy5.Attribute = 3;
+enemy6.Tile = 117; enemy6.Attribute = 3;
+}
+}
+} else {
+if(eFlipped){
+enemy1.Tile = 87; enemy1.Attribute = 66;
+enemy2.Tile = 86; enemy2.Attribute = 66;
+enemy3.Tile = 103; enemy3.Attribute = 66;
+enemy4.Tile = 102; enemy4.Attribute = 66;
+enemy5.Tile = 119; enemy5.Attribute = 67;
+enemy6.Tile = 118; enemy6.Attribute = 67;
+} else {
+enemy1.Tile = 86; enemy1.Attribute = 2;
+enemy2.Tile = 87; enemy2.Attribute = 2;
+enemy3.Tile = 102; enemy3.Attribute = 2;
+enemy4.Tile = 103; enemy4.Attribute = 2;
+enemy5.Tile = 118; enemy5.Attribute = 3;
+enemy6.Tile = 119; enemy6.Attribute = 3;
+}
+}
+
+if(_x < 0){
+_x = 0;
+}
+
+if(_x > 240){
+_x = 0;
+}
+
+if(Input.GetKey(KeyCode.Player1.A)){
+if(grounded){
+vSpeed = jumpSpeed;
+counter = 0;
+}
+}
+
+if(Input.GetKey(KeyCode.Player1.Select)){
+  i = 5;
+  while(i>1){
+    i = i - 1;
+    box4.X = box4.X + 1;
   }
-  
+} else {
+  box4.X = box4.X + 1;
+}
 
 
-  if(Input.GetKey(KeyCode.Player1.A)){
-    if(grounded){
-      vSpeed = jumpSpeed;
-      counter = 0;
-    }
-  }
+hero1.X = _x;
+hero1.Y = _y;
+hero2.X = _x+8;
+hero2.Y = _y;
+hero3.X = _x;
+hero3.Y = _y+8;
+hero4.X = _x+8;
+hero4.Y = _y+8;
+hero5.X = _x;
+hero5.Y = _y+16;
+hero6.X = _x+8;
+hero6.Y = _y+16;
 
-
-  hero1.X = _x;
-  hero1.Y = _y;
-  hero2.X = _x+8;
-  hero2.Y = _y;
-  hero3.X = _x;
-  hero3.Y = _y+8;
-  hero4.X = _x+8;
-  hero4.Y = _y+8;
-  hero5.X = _x;
-  hero5.Y = _y+16;
-  hero6.X = _x+8;
-  hero6.Y = _y+16;
-
-  enemy1.X = ex;
-  enemy1.Y = ey;
-  enemy2.X = ex+8;
-  enemy2.Y = ey;
-  enemy3.X = ex;
-  enemy3.Y = ey+8;
-  enemy4.X = ex+8;
-  enemy4.Y = ey+8;
-  enemy5.X = ex;
-  enemy5.Y = ey+16;
-  enemy6.X = ex+8;
-  enemy6.Y = ey+16;
-
-
-  //box1.X = box1.X + 1;
-  //box2.X = box2.X + 1;
-  
+enemy1.X = ex;
+enemy1.Y = ey;
+enemy2.X = ex+8;
+enemy2.Y = ey;
+enemy3.X = ex;
+enemy3.Y = ey+8;
+enemy4.X = ex+8;
+enemy4.Y = ey+8;
+enemy5.X = ex;
+enemy5.Y = ey+16;
+enemy6.X = ex+8;
+enemy6.Y = ey+16;
 }
