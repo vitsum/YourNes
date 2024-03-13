@@ -3,3 +3,4 @@ obj/*
 Stuff/*
 **.o
 .vs/*
+NesOutput/*
