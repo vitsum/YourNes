@@ -59,6 +59,8 @@ byte eDirectionInterval = 0;
 
 byte i = 0;
 
+byte[] myArray = [5];
+
 void Start(){
   hero1 = CreateSprite(_x,_y, 88, 0);
   hero2 = CreateSprite(_x+8,_y, 89, 0);
@@ -78,6 +80,12 @@ void Start(){
   box2 = CreateSprite(108, 172+20, 53, 4);
   box3 = CreateSprite(100, 180+20, 52, 4);
   box4 = CreateSprite(108, 180+20, 53, 4);
+
+  myArray[0] = 5;
+  myArray[1] = 10;
+  myArray[2] = 15;
+  myArray[3] = 20;
+  myArray[4] = 25;
 }
 
 void Update(){
@@ -514,7 +522,7 @@ if(Input.GetKey(KeyCode.Player1.Select)){
     box4.X = box4.X + 1;
   }
 } else {
-  box4.X = box4.X + 1;
+  box4.X = box4.X + myArray[0];
 }
 
 

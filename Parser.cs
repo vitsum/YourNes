@@ -21,7 +21,7 @@ namespace NesCompiler
             while (_current < _tokens.Count)
             {
                 var token = _tokens[_current];
-                Console.WriteLine(token.Type + " : " + token.Value);
+                Console.WriteLine("("+_current + ") " + token.Type + " : " + token.Value);
                 switch (token.Type)
                 {
                     case "symbol":
@@ -54,28 +54,67 @@ namespace NesCompiler
         private AstNode ParseByteDeclaration()
         {
             var node = new AstNode("ByteDeclaration");
-            node.Children.Add(new AstNode("Byte", _tokens[_current++].Value));
+            var typeToken = _tokens[_current++];
+            
 
-            node.Children.Add(new AstNode("Name", _tokens[_current++].Value));
-
-            var token = _tokens[_current++];
-
-            if(token.Type == "=")
+            bool isArray = _tokens[_current].Type == "["; 
+            
+            if (isArray)
             {
-                //TODO parse expression
-                node.Children.Add(ParseExpression());
+                node.Children.Add(new AstNode("Type", typeToken.Value + "[]"));
+                _current = _current + 2; //skipping []
 
+                var nameToken = _tokens[_current++];
+                if (nameToken.Type != "symbol")
+                {
+                    throw new Exception("Expected variable name in byte declaration but found: " + nameToken.Type + "," + nameToken.Value);
+                }
+                node.Children.Add(new AstNode("Name", nameToken.Value));
+
+
+                if (_tokens[_current].Type != "=")
+                {
+                    throw new Exception("Expected '=' after array declaration");
+                }
+                _current++; // Skip '='
+
+                if (_tokens[_current].Type != "[")
+                {
+                    throw new Exception("Expected '[' after '='");
+                }
+                _current++; // Skip '['
+
+                var sizeNode = new AstNode("Constant", _tokens[_current++].Value);
+                node.Children.Add(sizeNode);
+
+                if (_tokens[_current].Type != "]")
+                {
+                    throw new Exception("Expected ']' after array size");
+                }
+                _current++; // Skip ']'
+            }
+            else
+            {
+                node.Children.Add(new AstNode("Type", typeToken.Value));
+                var nameToken = _tokens[_current++];
+                if (nameToken.Type != "symbol")
+                {
+                    throw new Exception("Expected variable name in byte declaration");
+                }
+                node.Children.Add(new AstNode("Name", nameToken.Value));
+
+                if (_tokens[_current].Type == "=")
+                {
+                    _current++; // Skip '='
+                    node.Children.Add(ParseExpression());
+                }
             }
 
-            token = _tokens[_current++];
-
-            if (token.Type == ";")
+            if (_tokens[_current].Type != ";")
             {
-
-            } else
-            {
-                throw new Exception("= or ; expected in byte declaration");
+                throw new Exception("Expected ';' after byte declaration");
             }
+            _current++; // Skip ';'
 
             return node;
         }
@@ -416,6 +455,8 @@ namespace NesCompiler
                     // Add the final operation or term to the expression node
                     node.Children.Add(termNode);
                 }
+
+
             }
 
             return node;
@@ -447,7 +488,7 @@ namespace NesCompiler
             }
 
             // Проверка на последующий доступ к члену или вызов функции
-            while (_current < _tokens.Count && (_tokens[_current].Type == "." || _tokens[_current].Type == "("))
+            while (_current < _tokens.Count && (_tokens[_current].Type == "." || _tokens[_current].Type == "(" || _tokens[_current].Type == "["))
             {
                 if (_tokens[_current].Type == ".")
                 {
@@ -465,6 +506,22 @@ namespace NesCompiler
                     // чтобы он мог принять текущий узел как часть вызова
                     node = ParseFunctionCall(node);
                     // Поскольку ParseFunctionCall уже продвигает _current, не нужно увеличивать его здесь
+                }
+                else if (_tokens[_current].Type == "[")
+                {
+                    _current++; // Пропустить '['
+                    var indexExpression = ParseExpression(); // Обрабатываем выражение индекса
+                    if (_tokens[_current].Type != "]")
+                    {
+                        throw new Exception("Expected ']' after array index");
+                    }
+                    _current++; // Пропустить ']'
+
+                    // Создаем узел ArrayAccess и обновляем node
+                    var arrayAccessNode = new AstNode("ArrayAccess");
+                    arrayAccessNode.Children.Add(node); // Добавляем текущий узел (например, идентификатор массива)
+                    arrayAccessNode.Children.Add(indexExpression); // Добавляем выражение индекса
+                    node = arrayAccessNode;
                 }
             }
 

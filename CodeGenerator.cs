@@ -146,15 +146,35 @@ namespace NesCompiler
         private void GenerateByteDeclaration(AstNode node)
         {
             var name = node.Children[1].Value;
-            var value = node.Children[2].Children[0].Value;
-            _symbolTable[name] = "byte";
+            var type = _symbolTable[name] = node.Children[0].Value;
 
-            _currentSb.AppendLine("; Byte declaration: " + name + " = " + value);
-            _currentSb.AppendLine($"{name}: .res 1");
+            _currentSb.AppendLine("; Byte var or array declaration: " + name);
 
-            _startMethodSb.AppendLine($"; initialization of {name} with {value}");
-            _startMethodSb.AppendLine($"LDA #{value}");
-            _startMethodSb.AppendLine($"STA {name}");
+            if (type == "byte[]")
+            {
+                var sizeNode = node.Children[2];
+                Console.Write("parsing array length: " + sizeNode.Type + ", " + sizeNode.Value);
+                var size = int.Parse(sizeNode.Value);
+
+                _currentSb.AppendLine($"{name}_ptr: .res 2");
+                _currentSb.AppendLine($"{name}_size: .res 1");
+                _currentSb.AppendLine($"    LDA #{size}");
+                _currentSb.AppendLine($"    STA {name}_size");
+                _currentSb.AppendLine($"{name}: .res {size}");
+
+                _currentSb.AppendLine($"    LDA #<{name}");
+                _currentSb.AppendLine($"    STA {name}_ptr");
+                _currentSb.AppendLine($"    LDA #>{name}");
+                _currentSb.AppendLine($"    STA {name}_ptr+1");
+            }
+            else
+            {
+                _currentSb.AppendLine($"{name}: .res 1");
+                var value = node.Children[2].Children[0].Value;
+                _startMethodSb.AppendLine($"; initialization of {name} with {value}");
+                _startMethodSb.AppendLine($"LDA #{value}");
+                _startMethodSb.AppendLine($"STA {name}");
+            }
         }
 
         private void GenerateSpriteDeclaration(AstNode node)
@@ -241,27 +261,6 @@ namespace NesCompiler
                 _currentSb.AppendLine($"    LDX #$02");
                 _currentSb.AppendLine($"    STX temp2");
                 _currentSb.AppendLine($"    LDA (temp), Y");
-            }
-            else if (node.Children[0].Type == "Declaration")
-            {
-                // Allocate memory for the local variable
-                var typeNode = node.Children[0];
-                var type = typeNode.Value;
-                var size = GetSizeForType(type);
-                var nameNode = node.Children[1];
-                var name = nameNode.Value;
-                var address = AllocateMemory(size);
-                _symbolTable[name] = type;
-
-                // Generate code to evaluate the expression on the right-hand side of the assignment
-                var assignmentNode = node.Children[2];
-                GenerateExpression(assignmentNode.Children[1]);
-
-                // Store the result in the memory location for the local variable
-                _currentSb.AppendLine("    STA " + address.ToString("X4"));
-
-                throw new NotImplementedException();
-                return;
             }
             else if(node.Children[0].Type == "Assignment")
             {
@@ -399,6 +398,31 @@ namespace NesCompiler
                     _currentSb.AppendLine($"    LDA #$00 ; Загружаем 0, так как кнопка не нажата");
                     _currentSb.AppendLine($"{endLabel}:");
                 }
+            }
+            else if (node.Children[0].Type == "ArrayAccess")
+            {
+                var arrayNode = node.Children[0].Children[0];
+                var indexNode = node.Children[0].Children[1];
+                var arrayName = arrayNode.Value;
+
+                // Generate code to calculate the array index
+                GenerateExpression(indexNode);
+
+                // Generate code to access the array element
+                _currentSb.AppendLine($"    TAY");
+                _currentSb.AppendLine($"    LDA #<{arrayName}");
+                _currentSb.AppendLine($"    STA {arrayName}_ptr");
+                _currentSb.AppendLine($"    LDA #>{arrayName}");
+                _currentSb.AppendLine($"    STA {arrayName}_ptr+1");
+                _currentSb.AppendLine($"    LDA ({arrayName}_ptr),Y");
+            }
+            else if (node.Children[0].Type == "Length")
+            {
+                var arrayNode = node.Children[0].Children[0];
+                var arrayName = arrayNode.Value;
+
+                // Generate code to load the array length
+                _currentSb.AppendLine($"    LDA {arrayName}_size");
             }
 
         }
@@ -572,14 +596,5 @@ namespace NesCompiler
                     throw new Exception("Unrecognized type: " + type);
             }
         }
-
-        private int AllocateMemory(int size)
-        {
-            var address = _nextFreeMemoryAddress;
-            _nextFreeMemoryAddress += size;
-            return address;
-        }
-
-
     }
 }

@@ -32,7 +32,7 @@ namespace NesCompiler
                         continue;
                     }
                 }
-                else if ("(){},;:.".IndexOf(c) != -1) // Removed '=' from here
+                else if ("()[]{},;:.".IndexOf(c) != -1) // Removed '=' from here
                 {
                     result.Add(new Token("" + c, ""));
                 }
@@ -99,7 +99,10 @@ namespace NesCompiler
                 else if (char.IsLetter(c) || c == '_')
                 {
                     int j = i;
-                    while (j < _text.Length && (char.IsLetterOrDigit(_text[j]) || _text[j] == '_')) j++;
+                    while (j < _text.Length && (char.IsLetterOrDigit(_text[j]) || _text[j] == '_'))
+                    {
+                        j++;
+                    }
                     string literal = _text.Substring(i, j - i);
 
                     // Check for boolean literals before adding as a symbol
