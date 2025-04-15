@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,8 +10,8 @@ namespace NesCompiler
 {
     class Program
     {
-        public const string templateFilename = "../../NesTemplates/gametemplate.asm";
-        public const string defaultCharset = "../../NesTemplates/defaultchar.chr";
+        public const string templateFilename = "NesTemplates/gametemplate.asm"; // Relative to project root
+        public const string defaultCharset = "NesTemplates/defaultchar.chr"; // Relative to project root
         public static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -19,7 +19,7 @@ namespace NesCompiler
                 Console.WriteLine("Error: input file expected. Default will be used");
                 try
                 {
-                    Compile("../../Default.den", templateFilename);
+                    Compile("Default.den", templateFilename); // Relative to project root
                 }
                 catch(Exception ex)
                 {
@@ -31,7 +31,7 @@ namespace NesCompiler
                 Compile(args[0], templateFilename);
             }
 
-            Console.ReadKey();
+            // Console.ReadKey(); // Removed: Not compatible with internal debug console
         }
 
         static void Compile(string filename, string templateFilename)
@@ -64,20 +64,25 @@ namespace NesCompiler
                 
                 Console.WriteLine(assembly);
 
-                string[] files = Directory.GetFiles("../../NesOutput");
+                // Ensure output directory exists
+                string outputDir = "NesOutput";
+                Directory.CreateDirectory(outputDir);
+
+                // Clear previous output files if any
+                string[] files = Directory.GetFiles(outputDir);
                 foreach (string file in files)
                 {
                     File.Delete(file);
                 }
 
-                File.Copy(defaultCharset, "../../NesOutput/defaultchar.chr");
+                File.Copy(defaultCharset, Path.Combine(outputDir, "defaultchar.chr")); // Use Path.Combine
 
-                var assemblyFilename = "../../NesOutput/" + inputWithoutExtension + ".asm";
+                var assemblyFilename = Path.Combine(outputDir, inputWithoutExtension + ".asm"); // Use Path.Combine
 
                 File.WriteAllText(assemblyFilename, assembly);
                 Console.WriteLine("Created " + assemblyFilename);
 
-                string batRelativeFileName = "../../NesTools/generate_nes.bat";
+                string batRelativeFileName = "NesTools/generate_nes.bat"; // Relative to project root
                 string currentDirectory = Directory.GetCurrentDirectory();
                 string batFullPath = Path.GetFullPath(Path.Combine(currentDirectory, batRelativeFileName));
                 Console.WriteLine("bat full path: " + batFullPath);
@@ -89,15 +94,20 @@ namespace NesCompiler
                 Process process = new Process();
                 process.StartInfo.FileName = "\"" + batFullPath + "\"";
                 process.StartInfo.Arguments = "\"" + argument + "\"";
-                //process.StartInfo.RedirectStandardError = true;
-                //process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardError = true; // Capture errors
+                process.StartInfo.UseShellExecute = false; // Required for redirection
 
                 string command = process.StartInfo.FileName + " " + process.StartInfo.Arguments;
                 Console.WriteLine(command);
 
                 process.Start();
+                process.WaitForExit(); // Wait for the batch script to finish!
 
-                //Console.WriteLine(process.StandardError.ReadToEnd());
+                string errors = process.StandardError.ReadToEnd(); // Read errors after waiting
+                if (!string.IsNullOrEmpty(errors))
+                {
+                    Console.WriteLine("Batch Script Errors:\n" + errors);
+                }
 
 
             }

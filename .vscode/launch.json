@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Launch (console)",
+      "type": "coreclr", // This type is used by C# Dev Kit for both .NET Core and .NET Framework
+      "request": "launch",
+      "preLaunchTask": "build", // Runs the 'build' task defined in tasks.json
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/bin/Debug/net6.0/NesCompiler.exe",
+      "args": [], // No arguments for general launch
+      "cwd": "${workspaceFolder}",
+      // For versions of .NET Framework lower than 4.7.2, use 'externalTerminal' instead of 'internalConsole'.
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Compile Default.den", // New configuration for testing
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build", // Still build before running
+      "program": "${workspaceFolder}/bin/Debug/net6.0/NesCompiler.exe",
+      "args": [ "Default.den" ], // Pass Default.den as argument
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
+  ]
+}
