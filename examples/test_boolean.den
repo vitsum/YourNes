@@ -1,0 +1,88 @@
+// Test: Boolean type and logic
+// Expected: Sprite behavior controlled by boolean variables
+// Visual: Sprite bounces when moving flag is true
+//         Color changes based on active boolean flag
+
+byte spriteX = 100;
+byte spriteY = 100;
+
+bool isMoving = false;
+bool isActive = true;
+bool shouldBounce = true;
+
+byte direction = 0; // 0 = right, 1 = left
+
+Sprite testSprite;
+
+void Start() {
+    testSprite = CreateSprite(spriteX, spriteY, 60, 0);
+}
+
+void Update() {
+    // Toggle movement with A button
+    if(Input.GetKey(KeyCode.Player1.A)) {
+        isMoving = true;
+    }
+
+    // Stop movement with B button
+    if(Input.GetKey(KeyCode.Player1.B)) {
+        isMoving = false;
+    }
+
+    // Test boolean in if statement
+    if(isMoving) {
+        if(direction == 0) {
+            spriteX = spriteX + 1;
+        }
+
+        if(direction == 1) {
+            spriteX = spriteX - 1;
+        }
+    }
+
+    // Test boolean for bounce logic
+    if(shouldBounce) {
+        if(spriteX > 200) {
+            direction = 1;
+        }
+
+        if(spriteX < 20) {
+            direction = 0;
+        }
+    }
+
+    // Test boolean assignment based on condition
+    if(spriteX > 150) {
+        isActive = false;
+    }
+
+    if(spriteX < 50) {
+        isActive = true;
+    }
+
+    // Change sprite color based on boolean
+    if(isActive) {
+        testSprite.Attribute = 1; // Green when active
+    }
+
+    if(isActive == false) {
+        testSprite.Attribute = 0; // Red when inactive
+    }
+
+    // Toggle bounce with Select
+    if(Input.GetKey(KeyCode.Player1.Select)) {
+        if(shouldBounce) {
+            shouldBounce = false;
+            direction = 0; // Always go right when not bouncing
+        }
+    }
+
+    // Re-enable bounce with Start
+    if(Input.GetKey(KeyCode.Player1.Start)) {
+        shouldBounce = true;
+    }
+
+    // Update sprite position
+    testSprite.X = spriteX;
+    testSprite.Y = spriteY;
+}

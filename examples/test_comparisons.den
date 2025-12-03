@@ -1,0 +1,65 @@
+// Test: Comparison operators (==, !=, >, <)
+// Expected: Sprites change color based on comparison results
+// Visual: Left sprite = green when counter < 128, red when >= 128
+//         Right sprite changes position based on equality tests
+
+byte counter = 0;
+byte leftX = 60;
+byte leftY = 100;
+byte rightX = 180;
+byte rightY = 100;
+
+Sprite leftSprite;
+Sprite rightSprite;
+
+void Start() {
+    leftSprite = CreateSprite(leftX, leftY, 10, 0);
+    rightSprite = CreateSprite(rightX, rightY, 11, 0);
+}
+
+void Update() {
+    counter = counter + 1;
+
+    // Test less than (<)
+    if(counter < 128) {
+        leftSprite.Attribute = 1; // Green palette when counter < 128
+        leftY = 100;
+    }
+
+    // Test greater than (>)
+    if(counter > 127) {
+        leftSprite.Attribute = 0; // Red palette when counter >= 128
+        leftY = 120;
+    }
+
+    // Test equality (==)
+    if(counter == 64) {
+        rightX = 200; // Jump right at exactly 64
+    }
+
+    if(counter == 128) {
+        rightX = 180; // Jump back at exactly 128
+    }
+
+    if(counter == 192) {
+        rightX = 160; // Jump left at exactly 192
+    }
+
+    // Test inequality (!=)
+    if(counter != 255) {
+        rightY = 100; // Normal position
+    }
+
+    if(counter == 255) {
+        rightY = 80;  // Jump up at 255
+        counter = 0;  // Reset counter
+        rightX = 180; // Reset X position
+    }
+
+    // Update sprite positions
+    leftSprite.X = leftX;
+    leftSprite.Y = leftY;
+
+    rightSprite.X = rightX;
+    rightSprite.Y = rightY;
+}

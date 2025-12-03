@@ -1,0 +1,64 @@
+// Test: Basic sprite creation and movement
+// Expected: 4 sprites moving in different directions
+// Visual: Red sprite moves right, green moves left, blue moves down, yellow moves up
+
+byte redX = 50;
+byte redY = 50;
+byte greenX = 150;
+byte greenY = 50;
+byte blueX = 100;
+byte blueY = 100;
+byte yellowX = 100;
+byte yellowY = 150;
+
+Sprite redSprite;
+Sprite greenSprite;
+Sprite blueSprite;
+Sprite yellowSprite;
+
+void Start() {
+    // Create 4 colored sprites at different positions
+    redSprite = CreateSprite(redX, redY, 1, 0);      // Red palette
+    greenSprite = CreateSprite(greenX, greenY, 2, 1); // Green palette
+    blueSprite = CreateSprite(blueX, blueY, 3, 2);    // Blue palette
+    yellowSprite = CreateSprite(yellowX, yellowY, 4, 3); // Yellow palette
+}
+
+void Update() {
+    // Red sprite moves right
+    redX = redX + 1;
+    if(redX > 240) {
+        redX = 0;
+    }
+
+    // Green sprite moves left
+    greenX = greenX - 1;
+    if(greenX < 1) {
+        greenX = 240;
+    }
+
+    // Blue sprite moves down
+    blueY = blueY + 1;
+    if(blueY > 220) {
+        blueY = 0;
+    }
+
+    // Yellow sprite moves up
+    yellowY = yellowY - 1;
+    if(yellowY < 1) {
+        yellowY = 220;
+    }
+
+    // Update sprite positions
+    redSprite.X = redX;
+    redSprite.Y = redY;
+
+    greenSprite.X = greenX;
+    greenSprite.Y = greenY;
+
+    blueSprite.X = blueX;
+    blueSprite.Y = blueY;
+
+    yellowSprite.X = yellowX;
+    yellowSprite.Y = yellowY;
+}

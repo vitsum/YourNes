@@ -1,0 +1,133 @@
+// Test: Array operations (declaration, indexing, read/write)
+// Expected: Sprite positions controlled by array values
+// Visual: 5 sprites in a row, positions stored in arrays
+//         Press Right to shift all sprites right
+//         Press Left to reset to original positions
+
+byte[] xPositions = [5];
+byte[] yPositions = [5];
+byte[] colors = [5];
+
+Sprite s0;
+Sprite s1;
+Sprite s2;
+Sprite s3;
+Sprite s4;
+
+byte counter = 0;
+
+void Start() {
+    // Initialize arrays with starting positions
+    xPositions[0] = 30;
+    xPositions[1] = 60;
+    xPositions[2] = 90;
+    xPositions[3] = 120;
+    xPositions[4] = 150;
+
+    yPositions[0] = 110;
+    yPositions[1] = 110;
+    yPositions[2] = 110;
+    yPositions[3] = 110;
+    yPositions[4] = 110;
+
+    colors[0] = 0;
+    colors[1] = 1;
+    colors[2] = 2;
+    colors[3] = 3;
+    colors[4] = 0;
+
+    // Create sprites using array values
+    s0 = CreateSprite(xPositions[0], yPositions[0], 25, colors[0]);
+    s1 = CreateSprite(xPositions[1], yPositions[1], 26, colors[1]);
+    s2 = CreateSprite(xPositions[2], yPositions[2], 27, colors[2]);
+    s3 = CreateSprite(xPositions[3], yPositions[3], 28, colors[3]);
+    s4 = CreateSprite(xPositions[4], yPositions[4], 29, colors[4]);
+}
+
+void Update() {
+    // Test array write - Press Right to shift sprites
+    if(Input.GetKey(KeyCode.Player1.Right)) {
+        byte i = 0;
+        while(i < 5) {
+            xPositions[i] = xPositions[i] + 1;
+
+            // Wrap around
+            if(xPositions[i] > 240) {
+                xPositions[i] = 0;
+            }
+
+            i = i + 1;
+        }
+    }
+
+    // Test array write - Press Left to reset
+    if(Input.GetKey(KeyCode.Player1.Left)) {
+        xPositions[0] = 30;
+        xPositions[1] = 60;
+        xPositions[2] = 90;
+        xPositions[3] = 120;
+        xPositions[4] = 150;
+    }
+
+    // Test array write - Press Up to move up
+    if(Input.GetKey(KeyCode.Player1.Up)) {
+        byte j = 0;
+        while(j < 5) {
+            yPositions[j] = yPositions[j] - 1;
+            if(yPositions[j] < 10) {
+                yPositions[j] = 10;
+            }
+            j = j + 1;
+        }
+    }
+
+    // Test array write - Press Down to move down
+    if(Input.GetKey(KeyCode.Player1.Down)) {
+        byte k = 0;
+        while(k < 5) {
+            yPositions[k] = yPositions[k] + 1;
+            if(yPositions[k] > 200) {
+                yPositions[k] = 200;
+            }
+            k = k + 1;
+        }
+    }
+
+    // Test cycling colors with A button
+    if(Input.GetKey(KeyCode.Player1.A)) {
+        counter = counter + 1;
+        if(counter == 10) {
+            counter = 0;
+
+            // Rotate colors in array
+            byte temp = colors[0];
+            colors[0] = colors[1];
+            colors[1] = colors[2];
+            colors[2] = colors[3];
+            colors[3] = colors[4];
+            colors[4] = temp;
+
+            s0.Attribute = colors[0];
+            s1.Attribute = colors[1];
+            s2.Attribute = colors[2];
+            s3.Attribute = colors[3];
+            s4.Attribute = colors[4];
+        }
+    }
+
+    // Test array read - update sprite positions from arrays
+    s0.X = xPositions[0];
+    s0.Y = yPositions[0];
+
+    s1.X = xPositions[1];
+    s1.Y = yPositions[1];
+
+    s2.X = xPositions[2];
+    s2.Y = yPositions[2];
+
+    s3.X = xPositions[3];
+    s3.Y = yPositions[3];
+
+    s4.X = xPositions[4];
+    s4.Y = yPositions[4];
+}

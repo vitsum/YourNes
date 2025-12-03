@@ -1,0 +1,102 @@
+// Test: While loop functionality
+// Expected: Creates a line of sprites using while loop
+// Visual: When A button pressed, sprites form horizontal line
+//         When B button pressed, sprites form vertical line
+
+byte spriteCount = 8;
+
+Sprite sprite0;
+Sprite sprite1;
+Sprite sprite2;
+Sprite sprite3;
+Sprite sprite4;
+Sprite sprite5;
+Sprite sprite6;
+Sprite sprite7;
+
+byte initialized = 0;
+
+void Start() {
+    sprite0 = CreateSprite(10, 100, 20, 0);
+    sprite1 = CreateSprite(30, 100, 20, 0);
+    sprite2 = CreateSprite(50, 100, 20, 0);
+    sprite3 = CreateSprite(70, 100, 20, 0);
+    sprite4 = CreateSprite(90, 100, 20, 0);
+    sprite5 = CreateSprite(110, 100, 20, 0);
+    sprite6 = CreateSprite(130, 100, 20, 0);
+    sprite7 = CreateSprite(150, 100, 20, 0);
+}
+
+void Update() {
+    // Test while loop with A button - horizontal arrangement
+    if(Input.GetKey(KeyCode.Player1.A)) {
+        byte i = 0;
+        byte xPos = 20;
+
+        while(i < spriteCount) {
+            // Update sprites based on loop counter
+            if(i == 0) { sprite0.X = xPos; sprite0.Y = 100; sprite0.Attribute = 1; }
+            if(i == 1) { sprite1.X = xPos; sprite1.Y = 100; sprite1.Attribute = 1; }
+            if(i == 2) { sprite2.X = xPos; sprite2.Y = 100; sprite2.Attribute = 1; }
+            if(i == 3) { sprite3.X = xPos; sprite3.Y = 100; sprite3.Attribute = 1; }
+            if(i == 4) { sprite4.X = xPos; sprite4.Y = 100; sprite4.Attribute = 1; }
+            if(i == 5) { sprite5.X = xPos; sprite5.Y = 100; sprite5.Attribute = 1; }
+            if(i == 6) { sprite6.X = xPos; sprite6.Y = 100; sprite6.Attribute = 1; }
+            if(i == 7) { sprite7.X = xPos; sprite7.Y = 100; sprite7.Attribute = 1; }
+
+            xPos = xPos + 25;
+            i = i + 1;
+        }
+    }
+
+    // Test while loop with B button - vertical arrangement
+    if(Input.GetKey(KeyCode.Player1.B)) {
+        byte j = 0;
+        byte yPos = 30;
+
+        while(j < spriteCount) {
+            // Update sprites based on loop counter
+            if(j == 0) { sprite0.X = 100; sprite0.Y = yPos; sprite0.Attribute = 2; }
+            if(j == 1) { sprite1.X = 100; sprite1.Y = yPos; sprite1.Attribute = 2; }
+            if(j == 2) { sprite2.X = 100; sprite2.Y = yPos; sprite2.Attribute = 2; }
+            if(j == 3) { sprite3.X = 100; sprite3.Y = yPos; sprite3.Attribute = 2; }
+            if(j == 4) { sprite4.X = 100; sprite4.Y = yPos; sprite4.Attribute = 2; }
+            if(j == 5) { sprite5.X = 100; sprite5.Y = yPos; sprite5.Attribute = 2; }
+            if(j == 6) { sprite6.X = 100; sprite6.Y = yPos; sprite6.Attribute = 2; }
+            if(j == 7) { sprite7.X = 100; sprite7.Y = yPos; sprite7.Attribute = 2; }
+
+            yPos = yPos + 20;
+            j = j + 1;
+        }
+    }
+
+    // Test nested while loops with Select button - grid pattern
+    if(Input.GetKey(KeyCode.Player1.Select)) {
+        byte counter = 0;
+        byte gridX = 50;
+
+        while(counter < 4) {
+            byte gridY = 50;
+            byte innerCount = 0;
+
+            while(innerCount < 2) {
+                byte idx = counter + counter + innerCount;
+
+                if(idx == 0) { sprite0.X = gridX; sprite0.Y = gridY; sprite0.Attribute = 3; }
+                if(idx == 1) { sprite1.X = gridX; sprite1.Y = gridY; sprite1.Attribute = 3; }
+                if(idx == 2) { sprite2.X = gridX; sprite2.Y = gridY; sprite2.Attribute = 3; }
+                if(idx == 3) { sprite3.X = gridX; sprite3.Y = gridY; sprite3.Attribute = 3; }
+                if(idx == 4) { sprite4.X = gridX; sprite4.Y = gridY; sprite4.Attribute = 3; }
+                if(idx == 5) { sprite5.X = gridX; sprite5.Y = gridY; sprite5.Attribute = 3; }
+                if(idx == 6) { sprite6.X = gridX; sprite6.Y = gridY; sprite6.Attribute = 3; }
+                if(idx == 7) { sprite7.X = gridX; sprite7.Y = gridY; sprite7.Attribute = 3; }
+
+                gridY = gridY + 40;
+                innerCount = innerCount + 1;
+            }
+
+            gridX = gridX + 40;
+            counter = counter + 1;
+        }
+    }
+}

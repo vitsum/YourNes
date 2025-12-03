@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /b *.den *.yournes)",
+      "Bash(dir:*)",
+      "Bash(git mv:*)",
+      "Bash(ca65:*)",
+      "Bash(ld65:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

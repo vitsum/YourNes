@@ -1,199 +1,188 @@
-# YourNes Language Specification (Derived from Compiler Code)
+# YourNes - NES Game Compiler
 
-This document describes the YourNes language based on the implementation found in `Lexer.cs`, `Parser.cs`, and `CodeGenerator.cs`. It is intended for creating applications for the Nintendo Entertainment System (NES).
+A compiler for creating Nintendo Entertainment System (NES) games using a custom high-level language.
 
-## 1. Lexical Structure
+## Project Structure
 
-### 1.1. Whitespace
-Spaces (` `), newlines (`\n`), and carriage returns (`\r`) are ignored between tokens.
+```
+YourNes/
+├── src/                    # Source code
+│   ├── Program.cs          # Main entry point
+│   ├── Lexer.cs            # Tokenization
+│   ├── Parser.cs           # AST generation
+│   ├── CodeGenerator.cs    # 6502 assembly generation
+│   └── Token.cs            # Token definitions
+├── examples/               # Example programs
+│   ├── Default.den         # Default demo (platformer game)
+│   ├── test_sprites.den    # Sprite movement test
+│   ├── test_arithmetic.den # Arithmetic operations test
+│   ├── test_comparisons.den# Comparison operators test
+│   ├── test_while_loop.den # While loop test
+│   ├── test_arrays.den     # Array operations test
+│   ├── test_input.den      # Controller input test
+│   ├── test_boolean.den    # Boolean logic test
+│   ├── test_if_else.den    # If-else statements test
+│   └── test_complex.den    # Complex game demo
+├── docs/                   # Documentation
+│   ├── README_SPEC.md      # Language specification
+│   └── TESTS.md            # Test programs documentation
+├── NesTemplates/           # NES assembly templates
+│   ├── gametemplate.asm    # Base template
+│   └── defaultchar.chr     # Default character set
+├── NesTools/               # NES build tools
+│   └── generate_nes.bat    # Assembly to .nes conversion
+├── NesOutput/              # Generated files (gitignored)
+├── NesCompiler.csproj      # C# project file
+├── NesCompiler.sln         # Visual Studio solution
+└── README.md               # This file
+```
 
-### 1.2. Comments
-- Single-line comments start with `//` and extend to the end of the line.
-- Multi-line comments (`/* ... */`) are not supported.
+## Quick Start
 
-### 1.3. Identifiers
-- Must start with a letter (`a-z`, `A-Z`) or underscore (`_`).
-- Can contain letters, numbers (`0-9`), and underscores.
-- Case-sensitive (implied by C# implementation).
+### Prerequisites
 
-### 1.4. Keywords & Recognized Symbols
-The compiler explicitly recognizes the following based on their context:
-- Types: `byte`, `Sprite`, `bool` (used in declarations/parameters)
-- Control Flow: `if`, `else`, `while`
-- Functions: `void` (as return type), `return`
-- Literals: `true`, `false`
+- .NET 8.0 SDK or later
+- **cc65 toolchain** (ca65 + ld65 assembler/linker)
+- NES emulator (FCEUX, Mesen, etc.)
 
-Other potential keywords (like `for`, `struct`, `const`) are not handled by the current compiler and would be treated as generic identifiers ("symbols").
+**📖 See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions**
 
-### 1.5. Literals
-- **Integer:** Sequences of digits (e.g., `123`). Hexadecimal or other bases are not supported by the lexer. Represented as 8-bit values in generated code (`LDA #value`).
-- **Boolean:** `true`, `false`. Represented as `$01` and `$00` respectively in generated code.
-- **String:** Enclosed in double quotes (`"`). Recognized by the lexer but not used in expressions by the parser or code generator.
+### Building the Compiler
 
-### 1.6. Operators
-- Assignment: `=`
-- Arithmetic: `+`, `-` (Implemented via `JSR add`, `JSR subtract`)
-- Comparison: `==`, `!=`, `>`, `<` (Implemented via `JSR equal`, `JSR notEqual`, `JSR greaterThan`, `JSR lowerThan`)
-- *Note:* `*`, `/`, `>=`, `<=` are tokenized but not implemented in the code generator. Bitwise shifts (`<<`, `>>`) and logical not (`!`) are also tokenized but not implemented.
+```bash
+dotnet build
+```
 
-### 1.7. Punctuation
-- Parentheses: `()` (Function calls, `if`/`while` conditions)
-- Braces: `{}` (Code blocks)
-- Brackets: `[]` (Array type declaration, array access, array size definition)
-- Semicolon: `;` (Statement terminator)
-- Comma: `,` (Separating parameters/arguments)
-- Dot: `.` (Member access)
+### Compiling a YourNes Program
 
-## 2. Program Structure
-- A program is a sequence of top-level declarations.
-- Allowed top-level declarations:
-    - `byte` variable/array declarations.
-    - `Sprite` variable declarations.
-    - `void` function declarations.
-- **Special Functions:** `Start()` and `Update()` are required. Their code is placed into specific sections of the final assembly output.
+```bash
+# Compile specific file
+dotnet run examples/test_sprites.den
 
-## 3. Data Types
-- **`byte`**: 8-bit unsigned integer type. Allocated 1 byte in zero-page memory.
-- **`Sprite`**: Represents an NES hardware sprite. Allocated 1 byte in zero-page memory, likely holding an OAM index. Managed via `CreateSprite`. Has implicit members `X`, `Y`, `Tile`, `Attribute`.
-- **`bool`**: Boolean type (`true`/`false`).
+# Or if no argument provided, compiles examples/Default.den
+dotnet run
+```
 
-## 4. Declarations
+This will:
+1. Parse the .den file
+2. Generate 6502 assembly (.asm)
+3. Assemble to .nes ROM file in `NesOutput/`
+4. Output is ready to load in your NES emulator
 
-### 4.1. Variable Declaration
-- **Syntax:** `type identifier [ = expression ];`
-- **Example:**
-  ```yournes
-  byte counter;
-  byte flags = 0; // Initialization code placed in Start()
-  Sprite playerSprite;
-  bool isActive = true; // Initialization code placed in Start()
-  ```
-- Must end with a semicolon (`;`).
-- Variables are allocated in zero-page memory.
+### Running Examples
 
-### 4.2. Array Declaration (byte only)
-- **Syntax:** `byte[] identifier = [ size ];`
-- **Example:**
-  ```yournes
-  byte[] palette = [16];
-  byte[] nametable = [1024];
-  ```
-- `size` must be an integer literal.
-- Allocates memory for the array data, a 2-byte pointer (`identifier_ptr`), and a 1-byte size (`identifier_size`) in zero-page. Pointer and size are initialized in `Start()`.
-- Initialization of array elements is not supported at declaration.
-- Must end with a semicolon (`;`).
+```bash
+# Try different test programs
+dotnet run examples/test_arithmetic.den
+dotnet run examples/test_comparisons.den
+dotnet run examples/test_complex.den
+```
 
-### 4.3. Function Declaration
-- **Syntax:** `void identifier ( [parameter_list] ) { statement_block }`
-- **Return Type:** Only `void` is supported.
-- **Parameters:** `type identifier [, type identifier ...]`
-    - Allowed types: `byte`, `Sprite`, `bool`. Parameter passing mechanism is not explicitly defined/used in the current generator.
-- **Special Functions:** `Start()` and `Update()` are generated without labels or `RTS`. Other functions are generated with a label and end with `RTS`.
-- **Example:**
-  ```yournes
-  // Required functions
-  void Start() {
-      // Initialization code
-  }
+Load the generated `.nes` file from `NesOutput/` in your emulator.
 
-  void Update() {
-      // Main loop code
-  }
+## Language Features
 
-  // User-defined function
-  void SetPosition(byte x, byte y) {
-      playerSprite.X = x; // Example usage
-      playerSprite.Y = y;
-  }
-  ```
+YourNes is a simple language designed for NES development:
 
-## 5. Statements
+### Data Types
+- `byte` - 8-bit unsigned integer
+- `bool` - Boolean (true/false)
+- `Sprite` - NES hardware sprite
+- `byte[]` - Byte arrays
 
-Statements are found within function bodies or statement blocks.
+### Control Flow
+- `if` / `else` statements
+- `while` loops
+- Comparison operators: `==`, `!=`, `>`, `<`
 
-### 5.1. Statement Block
-- **Syntax:** `{ [statement ...] }`
-- Groups zero or more statements.
+### Functions
+- `void` functions (no return values yet)
+- Special functions: `Start()` and `Update()`
 
-### 5.2. If Statement
-- **Syntax:** `if ( expression ) statement_block [ else statement_block ]`
-- Condition expression must evaluate to a boolean (`true`/`$01` or `false`/`$00`).
-- Uses `CMP #$00`, `BNE`, `BEQ`, `JMP` for branching.
+### Built-in Functions
+- `CreateSprite(x, y, tile, attribute)` - Create a sprite
+- `Input.GetKey(KeyCode.Player1.Button)` - Read controller input
 
-### 5.3. While Statement
-- **Syntax:** `while ( expression ) statement_block`
-- Condition expression must evaluate to a boolean.
-- Uses labels, `CMP #$00`, `BEQ`, `JMP` for looping.
+### Example Program
 
-### 5.4. Return Statement
-- **Syntax:** `return [ expression ];`
-- Exits the current `void` function. The optional expression is evaluated but its value is ignored.
-- Not typically needed in `Start` or `Update`. Generates `RTS` in other functions.
-- Must end with a semicolon (`;`).
+```yournes
+byte playerX = 100;
+byte playerY = 100;
+Sprite player;
 
-### 5.5. Expression Statement
-- **Syntax:** `expression ;`
-- An expression evaluated for its side effects (e.g., assignment, function call).
-- Must end with a semicolon (`;`).
-- **Example:**
-  ```yournes
-  x = y + 1;
-  DoSomething();
-  playerSprite.X = 100;
-  ```
+void Start() {
+    player = CreateSprite(playerX, playerY, 1, 0);
+}
 
-## 6. Expressions
+void Update() {
+    if(Input.GetKey(KeyCode.Player1.Right)) {
+        playerX = playerX + 1;
+    }
 
-Expressions evaluate to a value, typically left in the Accumulator (A register).
+    if(Input.GetKey(KeyCode.Player1.Left)) {
+        playerX = playerX - 1;
+    }
 
-### 6.1. Literals
-- Integer literals (e.g., `10`, `255`) -> `LDA #value`
-- Boolean literals (`true`, `false`) -> `LDA #$01` or `LDA #$00`
+    player.X = playerX;
+    player.Y = playerY;
+}
+```
 
-### 6.2. Identifiers
-- Referencing variables -> `LDA identifier`
+## Documentation
 
-### 6.3. Binary Operations
-- **Syntax:** `expression operator expression`
-- **Operators:** `+`, `-`, `==`, `!=`, `>`, `<`. Operands are pushed to stack, a `JSR` to a corresponding routine is performed, result expected in A.
-- *Note:* Operator precedence is not explicitly handled; likely simple left-to-right evaluation. Parentheses for explicit grouping are not parsed into the AST structure.
+- **[Language Specification](docs/README_SPEC.md)** - Complete language reference
+- **[Test Programs Guide](docs/TESTS.md)** - Detailed guide to all test programs
 
-### 6.4. Assignment
-- **Syntax:** `lvalue = expression`
-- `lvalue` can be an identifier, array access, or member access.
-- Right side is evaluated (result in A), then stored using `STA identifier` or `STA (pointer), Y`.
+## Current Limitations
 
-### 6.5. Function Call
-- **Syntax:** `identifier ( [expression [, expression ...]] )` or `namespace.identifier ( ... )`
-- **Built-ins:**
-    - `CreateSprite(byte x, byte y, byte tile, byte attribute)`: Calls `JSR CreateSprite` after pushing args to stack. Returns sprite handle in A.
-    - `Input.GetKey(KeyCode.PlayerX.Button)`: Generates inline code to check controller state (`pad1`/`pad2`) and returns `1` or `0` in A. `KeyCode.Player1` and `KeyCode.Player2` with `Right`, `Left`, `Down`, `Up`, `Start`, `Select`, `B`, `A` are supported.
-- **User Functions:** `JSR functionName`. Argument passing not implemented.
+- No multiplication/division operators (tokenized but not implemented)
+- No operator precedence (left-to-right evaluation)
+- No `for` loops (use `while` instead)
+- No function parameters/return values
+- No local variables (all variables are global)
+- Single global scope
 
-### 6.6. Member Access
-- **Syntax:** `expression . identifier`
-- Only implemented for `Sprite` type variables.
-- `sprite.X` -> Accesses OAM byte at offset 3 from sprite's base OAM address.
-- `sprite.Y` -> Accesses OAM byte at offset 0.
-- `sprite.Tile` -> Accesses OAM byte at offset 1.
-- `sprite.Attribute` -> Accesses OAM byte at offset 2.
-- Uses indirect indexed addressing: `LDY #offset`, `LDX sprite_var`, `STX temp`, `LDA (temp), Y`.
+See [docs/README_SPEC.md](docs/README_SPEC.md) for complete details.
 
-### 6.7. Array Access
-- **Syntax:** `expression [ expression ]`
-- Only implemented for `byte[]`.
-- Index expression is evaluated (result in A), transferred to Y (`TAY`).
-- Array base address loaded into `arrayName_ptr`.
-- Element accessed using `LDA (arrayName_ptr), Y`.
+## Development
 
-## 7. Built-in Dependencies
-The generated code relies on an assembly template and external definitions:
-- **Subroutines:** `add`, `subtract`, `equal`, `notEqual`, `greaterThan`, `lowerThan`, `CreateSprite`.
-- **Zero-Page Variables:** `temp`, `temp2` (used for indirect addressing), `pad1`, `pad2` (controller state).
-- **Constants:** `BTN_RIGHT`, `BTN_LEFT`, `BTN_DOWN`, `BTN_UP`, `BTN_START`, `BTN_SELECT`, `BTN_B`, `BTN_A` (button masks).
+### Project Configuration
 
-## 8. Notes & Limitations
-- **Operator Precedence/Grouping:** Not handled; evaluation is likely left-to-right for sequences of operators. Use explicit assignments to temporary variables for complex calculations.
-- **Scope:** Single global scope implied. No local variables within functions unless implemented via zero-page reuse manually.
-- **Type System:** Very basic. No implicit casting. Type mismatches are likely caught at code generation (if at all) or result in runtime errors.
-- **Missing Features:** No `for` loops, user-defined `struct`s, `const` declarations, pointers (other than implicit array/sprite pointers), explicit type casting, modules, non-`void` functions, multiplication/division.
+The project uses:
+- .NET 8.0 SDK-style project
+- Source files in `src/`
+- Examples in `examples/`
+- Build output in `bin/` and `obj/` (gitignored)
+- Generated NES files in `NesOutput/` (gitignored)
+
+### VSCode Configuration
+
+The `.vscode/` directory contains:
+- Build tasks
+- Launch configurations
+- Recommended extensions
+
+### Adding New Examples
+
+1. Create a `.den` file in `examples/`
+2. Write your YourNes code
+3. Compile with `dotnet run examples/yourfile.den`
+4. Test in NES emulator
+
+## Contributing
+
+When contributing:
+1. Add tests for new features in `examples/`
+2. Update language spec in `docs/README_SPEC.md`
+3. Update test documentation in `docs/TESTS.md`
+4. Follow existing code style
+
+## License
+
+See the main YourNes repository for license information.
+
+## Acknowledgments
+
+- Uses cc65 toolchain (ca65/ld65) for 6502 assembly
+- Template based on standard NES development patterns
+- Inspired by classic NES homebrew development

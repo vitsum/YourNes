@@ -19,7 +19,7 @@ namespace NesCompiler
                 Console.WriteLine("Error: input file expected. Default will be used");
                 try
                 {
-                    Compile("Default.den", templateFilename); // Relative to project root
+                    Compile("examples/Default.den", templateFilename); // Relative to project root
                 }
                 catch(Exception ex)
                 {

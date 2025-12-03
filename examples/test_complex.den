@@ -1,0 +1,278 @@
+// Test: Complex program combining multiple features
+// Expected: Interactive demo with multiple sprites and systems
+// Visual: Player-controlled sprite can interact with moving objects
+//         Collect items (they disappear), avoid enemies (change color on collision)
+
+byte playerX = 120;
+byte playerY = 180;
+byte score = 0;
+
+// Item positions (collectibles)
+byte item1X = 50;
+byte item1Y = 50;
+byte item1Active = 1;
+
+byte item2X = 150;
+byte item2Y = 80;
+byte item2Active = 1;
+
+byte item3X = 100;
+byte item3Y = 120;
+byte item3Active = 1;
+
+// Enemy positions
+byte enemy1X = 30;
+byte enemy1Y = 100;
+byte enemy1Dir = 1;
+
+byte enemy2X = 200;
+byte enemy2Y = 150;
+byte enemy2Dir = 0;
+
+// Collision detection sizes
+byte spriteSize = 8;
+
+bool hitEnemy = false;
+byte hitTimer = 0;
+
+Sprite player;
+Sprite item1;
+Sprite item2;
+Sprite item3;
+Sprite enemy1;
+Sprite enemy2;
+
+void Start() {
+    player = CreateSprite(playerX, playerY, 80, 0);
+
+    item1 = CreateSprite(item1X, item1Y, 81, 3);
+    item2 = CreateSprite(item2X, item2Y, 81, 3);
+    item3 = CreateSprite(item3X, item3Y, 81, 3);
+
+    enemy1 = CreateSprite(enemy1X, enemy1Y, 82, 0);
+    enemy2 = CreateSprite(enemy2X, enemy2Y, 82, 0);
+}
+
+void Update() {
+    // Player input
+    if(Input.GetKey(KeyCode.Player1.Right)) {
+        playerX = playerX + 2;
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Left)) {
+        playerX = playerX - 2;
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Up)) {
+        playerY = playerY - 2;
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Down)) {
+        playerY = playerY + 2;
+    }
+
+    // Player boundaries
+    if(playerX < 5) { playerX = 5; }
+    if(playerX > 240) { playerX = 240; }
+    if(playerY < 5) { playerY = 5; }
+    if(playerY > 220) { playerY = 220; }
+
+    // Enemy movement
+    if(enemy1Dir == 1) {
+        enemy1X = enemy1X + 1;
+        if(enemy1X > 220) {
+            enemy1Dir = 0;
+        }
+    } else {
+        enemy1X = enemy1X - 1;
+        if(enemy1X < 20) {
+            enemy1Dir = 1;
+        }
+    }
+
+    if(enemy2Dir == 1) {
+        enemy2Y = enemy2Y + 1;
+        if(enemy2Y > 200) {
+            enemy2Dir = 0;
+        }
+    } else {
+        enemy2Y = enemy2Y - 1;
+        if(enemy2Y < 30) {
+            enemy2Dir = 1;
+        }
+    }
+
+    // Item collection - using collision detection
+    if(item1Active == 1) {
+        // Check collision with item1
+        byte distX = 0;
+        byte distY = 0;
+
+        if(playerX > item1X) {
+            distX = playerX - item1X;
+        } else {
+            distX = item1X - playerX;
+        }
+
+        if(playerY > item1Y) {
+            distY = playerY - item1Y;
+        } else {
+            distY = item1Y - playerY;
+        }
+
+        if(distX < spriteSize) {
+            if(distY < spriteSize) {
+                item1Active = 0;
+                score = score + 1;
+            }
+        }
+    }
+
+    if(item2Active == 1) {
+        byte distX2 = 0;
+        byte distY2 = 0;
+
+        if(playerX > item2X) {
+            distX2 = playerX - item2X;
+        } else {
+            distX2 = item2X - playerX;
+        }
+
+        if(playerY > item2Y) {
+            distY2 = playerY - item2Y;
+        } else {
+            distY2 = item2Y - playerY;
+        }
+
+        if(distX2 < spriteSize) {
+            if(distY2 < spriteSize) {
+                item2Active = 0;
+                score = score + 1;
+            }
+        }
+    }
+
+    if(item3Active == 1) {
+        byte distX3 = 0;
+        byte distY3 = 0;
+
+        if(playerX > item3X) {
+            distX3 = playerX - item3X;
+        } else {
+            distX3 = item3X - playerX;
+        }
+
+        if(playerY > item3Y) {
+            distY3 = playerY - item3Y;
+        } else {
+            distY3 = item3Y - playerY;
+        }
+
+        if(distX3 < spriteSize) {
+            if(distY3 < spriteSize) {
+                item3Active = 0;
+                score = score + 1;
+            }
+        }
+    }
+
+    // Enemy collision detection
+    hitEnemy = false;
+
+    byte eDist1X = 0;
+    byte eDist1Y = 0;
+
+    if(playerX > enemy1X) {
+        eDist1X = playerX - enemy1X;
+    } else {
+        eDist1X = enemy1X - playerX;
+    }
+
+    if(playerY > enemy1Y) {
+        eDist1Y = playerY - enemy1Y;
+    } else {
+        eDist1Y = enemy1Y - playerY;
+    }
+
+    if(eDist1X < spriteSize) {
+        if(eDist1Y < spriteSize) {
+            hitEnemy = true;
+        }
+    }
+
+    byte eDist2X = 0;
+    byte eDist2Y = 0;
+
+    if(playerX > enemy2X) {
+        eDist2X = playerX - enemy2X;
+    } else {
+        eDist2X = enemy2X - playerX;
+    }
+
+    if(playerY > enemy2Y) {
+        eDist2Y = playerY - enemy2Y;
+    } else {
+        eDist2Y = enemy2Y - playerY;
+    }
+
+    if(eDist2X < spriteSize) {
+        if(eDist2Y < spriteSize) {
+            hitEnemy = true;
+        }
+    }
+
+    // Visual feedback for collision
+    if(hitEnemy) {
+        player.Attribute = 0; // Red when hit
+        hitTimer = 30;
+    } else {
+        if(hitTimer > 0) {
+            hitTimer = hitTimer - 1;
+            player.Attribute = 0;
+        } else {
+            player.Attribute = 1; // Green when safe
+        }
+    }
+
+    // Update all sprites
+    player.X = playerX;
+    player.Y = playerY;
+
+    enemy1.X = enemy1X;
+    enemy1.Y = enemy1Y;
+
+    enemy2.X = enemy2X;
+    enemy2.Y = enemy2Y;
+
+    // Hide collected items by moving off screen
+    if(item1Active == 1) {
+        item1.X = item1X;
+        item1.Y = item1Y;
+    } else {
+        item1.Y = 250; // Move off screen
+    }
+
+    if(item2Active == 1) {
+        item2.X = item2X;
+        item2.Y = item2Y;
+    } else {
+        item2.Y = 250;
+    }
+
+    if(item3Active == 1) {
+        item3.X = item3X;
+        item3.Y = item3Y;
+    } else {
+        item3.Y = 250;
+    }
+
+    // Reset game with Start button
+    if(Input.GetKey(KeyCode.Player1.Start)) {
+        item1Active = 1;
+        item2Active = 1;
+        item3Active = 1;
+        score = 0;
+        playerX = 120;
+        playerY = 180;
+    }
+}

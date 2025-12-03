@@ -1,0 +1,51 @@
+// Test: Arithmetic operations (addition and subtraction)
+// Expected: Sprite moves based on calculated positions
+// Visual: Sprite bounces left-right using addition/subtraction
+
+byte baseX = 128;
+byte baseY = 100;
+byte offset = 0;
+byte direction = 1; // 1 = right, 0 = left
+byte speed = 2;
+
+Sprite testSprite;
+
+void Start() {
+    testSprite = CreateSprite(baseX, baseY, 5, 0);
+}
+
+void Update() {
+    // Test addition
+    if(direction == 1) {
+        offset = offset + speed;
+
+        // Test comparison with addition result
+        if(offset > 100) {
+            direction = 0;
+        }
+    }
+
+    // Test subtraction
+    if(direction == 0) {
+        offset = offset - speed;
+
+        // Test comparison after subtraction
+        if(offset < 5) {
+            direction = 1;
+        }
+    }
+
+    // Calculate final position using arithmetic
+    byte finalX = baseX + offset;
+
+    // Test subtraction for Y position oscillation
+    byte yOffset = offset;
+    if(yOffset > 50) {
+        yOffset = 100 - yOffset;
+    }
+    byte finalY = baseY + yOffset;
+
+    // Update sprite
+    testSprite.X = finalX;
+    testSprite.Y = finalY;
+}

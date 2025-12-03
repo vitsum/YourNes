@@ -1,0 +1,76 @@
+// Test: Input handling with all controller buttons
+// Expected: Sprite responds to all controller inputs
+// Visual: D-pad moves sprite, buttons change appearance
+//         A = green, B = red, Start = tile 50, Select = tile 51
+
+byte playerX = 120;
+byte playerY = 100;
+byte currentTile = 40;
+byte currentColor = 0;
+
+Sprite player;
+
+void Start() {
+    player = CreateSprite(playerX, playerY, currentTile, currentColor);
+}
+
+void Update() {
+    // Test D-pad input
+    if(Input.GetKey(KeyCode.Player1.Right)) {
+        playerX = playerX + 2;
+        if(playerX > 240) {
+            playerX = 0;
+        }
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Left)) {
+        playerX = playerX - 2;
+        if(playerX < 2) {
+            playerX = 240;
+        }
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Down)) {
+        playerY = playerY + 2;
+        if(playerY > 220) {
+            playerY = 10;
+        }
+    }
+
+    if(Input.GetKey(KeyCode.Player1.Up)) {
+        playerY = playerY - 2;
+        if(playerY < 10) {
+            playerY = 220;
+        }
+    }
+
+    // Test A button - change to green palette
+    if(Input.GetKey(KeyCode.Player1.A)) {
+        currentColor = 1;
+        currentTile = 41;
+    }
+
+    // Test B button - change to red palette
+    if(Input.GetKey(KeyCode.Player1.B)) {
+        currentColor = 0;
+        currentTile = 42;
+    }
+
+    // Test Start button - change to tile 50
+    if(Input.GetKey(KeyCode.Player1.Start)) {
+        currentTile = 50;
+        currentColor = 2;
+    }
+
+    // Test Select button - change to tile 51
+    if(Input.GetKey(KeyCode.Player1.Select)) {
+        currentTile = 51;
+        currentColor = 3;
+    }
+
+    // Update sprite
+    player.X = playerX;
+    player.Y = playerY;
+    player.Tile = currentTile;
+    player.Attribute = currentColor;
+}

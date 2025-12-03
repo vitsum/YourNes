@@ -1,0 +1,115 @@
+// Test: If-else statements with various conditions
+// Expected: Different sprite behaviors based on conditions
+// Visual: Two sprites with different movement patterns
+//         Left sprite follows player input, right sprite automatic
+
+byte leftX = 60;
+byte leftY = 100;
+byte rightX = 180;
+byte rightY = 100;
+
+byte autoCounter = 0;
+byte state = 0;
+
+Sprite leftSprite;
+Sprite rightSprite;
+
+void Start() {
+    leftSprite = CreateSprite(leftX, leftY, 70, 0);
+    rightSprite = CreateSprite(rightX, rightY, 71, 0);
+}
+
+void Update() {
+    // Test if-else with input
+    if(Input.GetKey(KeyCode.Player1.Right)) {
+        leftX = leftX + 2;
+        leftSprite.Attribute = 1;
+    } else {
+        if(Input.GetKey(KeyCode.Player1.Left)) {
+            leftX = leftX - 2;
+            leftSprite.Attribute = 2;
+        } else {
+            leftSprite.Attribute = 0; // Default color when not moving
+        }
+    }
+
+    // Test nested if-else
+    if(Input.GetKey(KeyCode.Player1.Up)) {
+        leftY = leftY - 2;
+        if(leftY < 20) {
+            leftY = 20;
+            leftSprite.Tile = 72; // Special tile at top
+        } else {
+            leftSprite.Tile = 70; // Normal tile
+        }
+    } else {
+        if(Input.GetKey(KeyCode.Player1.Down)) {
+            leftY = leftY + 2;
+            if(leftY > 200) {
+                leftY = 200;
+                leftSprite.Tile = 73; // Special tile at bottom
+            } else {
+                leftSprite.Tile = 70; // Normal tile
+            }
+        }
+    }
+
+    // Automatic sprite with if-else state machine
+    autoCounter = autoCounter + 1;
+
+    if(autoCounter > 60) {
+        autoCounter = 0;
+        state = state + 1;
+
+        if(state > 3) {
+            state = 0;
+        }
+    }
+
+    // Test if-else chain for states
+    if(state == 0) {
+        rightX = rightX + 1;
+        rightY = 100;
+        rightSprite.Attribute = 0;
+    } else {
+        if(state == 1) {
+            rightY = rightY + 1;
+            rightX = 180;
+            rightSprite.Attribute = 1;
+        } else {
+            if(state == 2) {
+                rightX = rightX - 1;
+                rightY = 140;
+                rightSprite.Attribute = 2;
+            } else {
+                rightY = rightY - 1;
+                rightX = 140;
+                rightSprite.Attribute = 3;
+            }
+        }
+    }
+
+    // Boundary wrapping with if-else
+    if(rightX > 220) {
+        rightX = 140;
+    } else {
+        if(rightX < 40) {
+            rightX = 140;
+        }
+    }
+
+    if(rightY > 180) {
+        rightY = 100;
+    } else {
+        if(rightY < 40) {
+            rightY = 100;
+        }
+    }
+
+    // Update sprites
+    leftSprite.X = leftX;
+    leftSprite.Y = leftY;
+
+    rightSprite.X = rightX;
+    rightSprite.Y = rightY;
+}

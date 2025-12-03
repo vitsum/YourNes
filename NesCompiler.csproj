@@ -2,23 +2,33 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>NesCompiler</RootNamespace> <!-- From original project -->
-    <AssemblyName>NesCompiler</AssemblyName> <!-- From original project -->
-    <ImplicitUsings>enable</ImplicitUsings> <!-- Enables modern implicit global usings -->
-    <Nullable>enable</Nullable> <!-- Enables nullable reference types -->
-    <!-- Deterministic builds are default in SDK-style, but explicitly setting -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>NesCompiler</RootNamespace>
+    <AssemblyName>NesCompiler</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <Deterministic>true</Deterministic>
-    <!-- AutoGenerateBindingRedirects is less common but kept from original -->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <!-- Disable auto-inclusion from root, we specify src/ manually -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
-  <!-- SDK-style projects automatically include .cs files -->
+  <!-- Explicitly include source files from src/ -->
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
   <!-- Framework references (like System, System.Core) are implicit -->
 
   <!-- Keep App.config if needed, ensuring it's copied to output -->
   <ItemGroup>
     <None Update="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NesTemplates\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NesTools\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
