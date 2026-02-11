@@ -1,11 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace NesCompiler
 {
     public class Lexer
     {
-        private string _text;
+        private readonly string _text;
+
+        private static readonly Dictionary<char, TokenType> SingleCharTokens = new()
+        {
+            { '(', TokenType.OpenParen },
+            { ')', TokenType.CloseParen },
+            { '[', TokenType.OpenBracket },
+            { ']', TokenType.CloseBracket },
+            { '{', TokenType.OpenBrace },
+            { '}', TokenType.CloseBrace },
+            { ',', TokenType.Comma },
+            { ';', TokenType.Semicolon },
+            { ':', TokenType.Colon },
+            { '.', TokenType.Dot },
+        };
+
+        private static readonly HashSet<string> TypeKeywords = new() { "byte", "Sprite", "bool" };
+
         public Lexer(string text)
         {
             _text = text;
@@ -17,131 +34,98 @@ namespace NesCompiler
             for (int i = 0; i < _text.Length; i++)
             {
                 var c = _text[i];
-                if (" \n\r".IndexOf(c) != -1) continue;
-                else if (c == '/')
+
+                if (char.IsWhiteSpace(c))
+                    continue;
+
+                if (c == '/')
                 {
-                    // Check for single-line comment
                     if (i < _text.Length - 1 && _text[i + 1] == '/')
                     {
-                        // Skip the rest of the line
                         i++;
                         while (i < _text.Length && _text[i] != '\n')
-                        {
                             i++;
-                        }
                         continue;
                     }
                 }
-                else if ("()[]{},;:.".IndexOf(c) != -1) // Removed '=' from here
+
+                if (SingleCharTokens.TryGetValue(c, out var singleCharType))
                 {
-                    result.Add(new Token("" + c, ""));
+                    result.Add(new Token(singleCharType));
+                    continue;
                 }
-                else if ("+-*/><=!".IndexOf(c) != -1)
+
+                if ("+-*/><=!".IndexOf(c) != -1)
                 {
-                    bool flag = false;
+                    bool twoChar = false;
                     if (i < _text.Length - 1)
                     {
-                        var nextChar = _text[i + 1];
-                        // Check for two-character operators involving '='
-                        if ((c == '=' && nextChar == '=') || // For '=='
-                            (c == '!' && nextChar == '=') || // For '!='
-                            (c == '>' && (nextChar == '=' || nextChar == '>')) || // For '>=' and '>>'
-                            (c == '<' && (nextChar == '=' || nextChar == '<'))) // For '<=' and '<<'
+                        var next = _text[i + 1];
+                        if ((c == '=' && next == '=') ||
+                            (c == '!' && next == '=') ||
+                            (c == '>' && (next == '=' || next == '>')) ||
+                            (c == '<' && (next == '=' || next == '<')))
                         {
-                            flag = true;
+                            twoChar = true;
                             i++;
-                            result.Add(new Token("operation","" + c + nextChar));
+                            result.Add(new Token(TokenType.Operation, "" + c + next));
                         }
                     }
-                    // This handles the case where '=' is not part of a two-character operator
-                    if (!flag)
+                    if (!twoChar)
                     {
                         if ("+-*/<>".IndexOf(c) != -1)
-                        {
-                            result.Add(new Token("operation", "" + c));
-                        }
+                            result.Add(new Token(TokenType.Operation, "" + c));
+                        else if (c == '=')
+                            result.Add(new Token(TokenType.Equals));
                         else
-                        {
-                            result.Add(new Token("" + c, ""));
-                        }
+                            result.Add(new Token(TokenType.Exclamation));
                     }
+                    continue;
                 }
-                else if (c == '"')
+
+                if (c == '"')
                 {
-                    // Find the closing quotation mark and extract the string literal
                     int j = i + 1;
                     while (j < _text.Length && _text[j] != '"')
-                    {
                         j++;
-                    }
                     if (j >= _text.Length)
-                    {
-                        // Unterminated string literal
-                        // You can throw an exception or handle it in some other way
                         throw new Exception("Unterminated string literal at index " + i);
-                    }
-                    string stringLiteral = _text.Substring(i + 1, j - i - 1);
-                    result.Add(new Token("string", stringLiteral));
+                    result.Add(new Token(TokenType.String, _text.Substring(i + 1, j - i - 1)));
                     i = j;
+                    continue;
                 }
-                else if (char.IsDigit(c))
+
+                if (char.IsDigit(c))
                 {
-                    // Extract the numeric literal
                     int j = i;
                     while (j < _text.Length && char.IsDigit(_text[j]))
-                    {
                         j++;
-                    }
-                    string numericLiteral = _text.Substring(i, j - i);
-                    result.Add(new Token("number", numericLiteral));
+                    result.Add(new Token(TokenType.Number, _text.Substring(i, j - i)));
                     i = j - 1;
+                    continue;
                 }
-                else if (char.IsLetter(c) || c == '_')
+
+                if (char.IsLetter(c) || c == '_')
                 {
                     int j = i;
                     while (j < _text.Length && (char.IsLetterOrDigit(_text[j]) || _text[j] == '_'))
-                    {
                         j++;
-                    }
                     string literal = _text.Substring(i, j - i);
 
-                    // Check for boolean literals before adding as a symbol
                     if (literal == "true" || literal == "false")
-                    {
-                        result.Add(new Token("boolean", literal));
-                    }
-                    else if (IsType(literal))
-                    {
-                        result.Add(new Token("type", literal));
-                    }
+                        result.Add(new Token(TokenType.Boolean, literal));
+                    else if (TypeKeywords.Contains(literal))
+                        result.Add(new Token(TokenType.Type, literal));
                     else
-                    {
-                        result.Add(new Token("symbol", literal));
-                    }
-                    i = j - 1; // Move past the last character of the symbol
-                }
-                else
-                {
-                    Console.WriteLine("\\n: " + (int)'\n');
-                    Console.WriteLine("Unrecognized character: '" + (int)c + "' at " + i + ", after '" + _text[i - 1] + "'.");
-                    throw new Exception("Unrecognized character: '" + c + "'.");
+                        result.Add(new Token(TokenType.Symbol, literal));
+
+                    i = j - 1;
+                    continue;
                 }
 
+                throw new Exception($"Unrecognized character: '{c}' at position {i}.");
             }
             return result;
-        }
-
-        private bool IsType(string literal)
-        {
-            switch (literal)
-            {
-                case "byte":
-                case "Sprite":
-                case "bool":
-                    return true;
-            }
-
-            return false;
         }
     }
 }

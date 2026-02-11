@@ -1,17 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace NesCompiler
 {
+    public enum TokenType
+    {
+        Symbol,
+        Number,
+        String,
+        Boolean,
+        Type,
+        Operation,
+
+        // Single-character tokens
+        OpenParen,    // (
+        CloseParen,   // )
+        OpenBracket,  // [
+        CloseBracket, // ]
+        OpenBrace,    // {
+        CloseBrace,   // }
+        Comma,        // ,
+        Semicolon,    // ;
+        Colon,        // :
+        Dot,          // .
+        Equals,       // =
+        Exclamation,  // !
+    }
+
     public class Token
     {
-        public string Type;
-        public string Value;
+        public TokenType Type { get; }
+        public string Value { get; }
 
-        public Token(string type, string value)
+        public Token(TokenType type, string value = "")
         {
             Type = type;
             Value = value;
